@@ -17,6 +17,8 @@
     Sound.duck(true);
     Sound.duck(false);
     Sound.setMusic('off');
+    Sound.setMusicOn(false);
+    Sound.tryAutostart();
     Sound.suspend();
     Sound.resume();
     ok(!Sound.isMusicPlaying());
@@ -39,10 +41,12 @@
     ok(L.off === 0 && L.low > 0 && L.medium > L.low && L.high > L.medium);
   });
 
-  test('settings: fresh install gets sound and music on', function () {
+  test('settings: fresh install gets sound and music on, full screen size', function () {
     var s = Settings.migrate(null);
     eq(s.sound, true);
+    eq(s.musicOn, true);
     eq(s.music, 'medium');
+    eq(s.screenFit, 100);
     eq(s.rounds, 10);
     eq(s.version, Settings.VERSION);
   });
@@ -50,14 +54,23 @@
   test('settings: settings saved by version 1 keep their choices but get sound switched on', function () {
     var s = Settings.migrate({ sound: false, timerSeconds: 30, rounds: 5 });
     eq(s.sound, true, 'v1 had sound off only because it was the default');
-    eq(s.music, 'medium');
+    eq(s.musicOn, true);
     eq(s.timerSeconds, 30);
     eq(s.rounds, 5);
   });
 
-  test('settings: choices saved by version 2 are respected', function () {
+  test('settings: version 2 "music off" becomes music on at medium volume once', function () {
     var s = Settings.migrate({ version: 2, sound: false, music: 'off' });
+    eq(s.sound, true);
+    eq(s.musicOn, true);
+    eq(s.music, 'medium');
+  });
+
+  test('settings: mute choices saved by version 3 are respected', function () {
+    var s = Settings.migrate({ version: 3, sound: false, musicOn: false, music: 'high', screenFit: 90 });
     eq(s.sound, false);
-    eq(s.music, 'off');
+    eq(s.musicOn, false);
+    eq(s.music, 'high');
+    eq(s.screenFit, 90);
   });
 })(this);

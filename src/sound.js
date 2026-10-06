@@ -20,7 +20,7 @@
   var sfxBus = null;
   var musicBus = null;
   var noiseBuf = null;
-  var state = { sfx: true, music: 'medium', ducked: false, unlocked: false };
+  var state = { sfx: true, music: 'medium', musicOn: true, ducked: false, unlocked: false };
   var music = { playing: false, step: 0, bar: 0, next: 0, timer: null };
   var lastPlayed = {};
 
@@ -256,8 +256,12 @@
     }
   }
 
+  function musicWanted() {
+    return state.musicOn && MUSIC_LEVELS[state.music] > 0;
+  }
+
   function musicGain() {
-    return (MUSIC_LEVELS[state.music] || 0) * (state.ducked ? DUCK : 1);
+    return musicWanted() ? MUSIC_LEVELS[state.music] * (state.ducked ? DUCK : 1) : 0;
   }
 
   function fadeMusic() {
@@ -266,7 +270,7 @@
   }
 
   function startMusic() {
-    if (music.playing || !ctx || !MUSIC_LEVELS[state.music]) { return; }
+    if (music.playing || !ctx || !musicWanted()) { return; }
     music.playing = true;
     music.step = 0;
     music.bar = 0;
@@ -291,10 +295,21 @@
     CHORDS: CHORDS,
     SFX_NAMES: Object.keys(SFX),
 
-    /* opts: { sfx: bool, music: 'off' | 'low' | 'medium' | 'high' } */
+    /* opts: { sfx: bool, musicOn: bool, music: 'low' | 'medium' | 'high' } */
     configure: function (opts) {
       if (opts.hasOwnProperty('sfx')) { state.sfx = !!opts.sfx; }
+      if (opts.hasOwnProperty('musicOn')) { state.musicOn = !!opts.musicOn; }
       if (opts.hasOwnProperty('music')) { Sound.setMusic(opts.music); }
+    },
+
+    /* Start right away where the browser allows audio without a key press
+     * (Android TV WebViews usually do). Otherwise the first key press starts it. */
+    tryAutostart: function () {
+      var ac = audio();
+      if (ac && ac.state === 'running') {
+        state.unlocked = true;
+        startMusic();
+      }
     },
 
     /* Call on every key press: creates/resumes the audio and starts the music. */
@@ -321,7 +336,12 @@
 
     setMusic: function (level) {
       state.music = MUSIC_LEVELS.hasOwnProperty(level) ? level : 'off';
-      if (!MUSIC_LEVELS[state.music]) { stopMusic(); return; }
+      Sound.setMusicOn(state.musicOn);
+    },
+
+    setMusicOn: function (on) {
+      state.musicOn = !!on;
+      if (!musicWanted()) { stopMusic(); return; }
       if (state.unlocked) { startMusic(); }
       fadeMusic();
     },

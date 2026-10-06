@@ -9,7 +9,9 @@
 
   var OPTIONS = [
     { key: 'sound', label: 'Sound effects', values: [true, false], fmt: onOff },
-    { key: 'music', label: 'Background music', values: ['off', 'low', 'medium', 'high'], fmt: function (v) { return v.charAt(0).toUpperCase() + v.slice(1); } },
+    { key: 'musicOn', label: 'Music', values: [true, false], fmt: onOff },
+    { key: 'music', label: 'Music volume', values: ['low', 'medium', 'high'], fmt: function (v) { return v.charAt(0).toUpperCase() + v.slice(1); } },
+    { key: 'screenFit', label: 'Screen size (lower it if the edges are cut off)', values: [100, 95, 90, 85, 80], fmt: function (v) { return v + '%'; } },
     { key: 'timerTrivia', label: 'Timer in trivia', values: [true, false], fmt: onOff },
     { key: 'timerKnowMe', label: 'Timer in "How well do you know me?"', values: [false, true], fmt: onOff },
     { key: 'timerSeconds', label: 'Timer length', values: [10, 15, 20, 30], fmt: function (v) { return v + ' seconds'; } },
@@ -20,7 +22,9 @@
 
   function apply(app, key, value) {
     if (key === 'sound') { CQ.Sound.setSfx(value); }
+    if (key === 'musicOn') { CQ.Sound.setMusicOn(value); }
     if (key === 'music') { CQ.Sound.setMusic(value); }
+    if (key === 'screenFit') { app.fit(); }
     if (key === 'rounds') { app.rounds = value; }
     if (key === 'debug') { CQ.debug.setVisible(value); }
     if (key === 'historyTrap') { CQ.input.setTrap(value); }
@@ -31,7 +35,7 @@
 
     mount: function (el, params, ctx) {
       var app = ctx.app;
-      el.appendChild(h('div', { class: 'h1' }, 'Settings'));
+      el.appendChild(h('div', { class: 'h2' }, 'Settings'));
       var rows = [];
 
       OPTIONS.forEach(function (opt) {

@@ -41,8 +41,16 @@
         ready
       ]));
 
+      var toggles = CQ.UI.soundToggles(ctx.app);
+      var quit = CQ.UI.button('Quit game', 'toggle');
+      toggles.el.appendChild(quit);
+      el.appendChild(toggles.el);
+
       CQ.Sound.play('pass');
-      ctx.setGrid([[{ el: ready, onSelect: function () { ctx.go('question'); } }]]);
+      ctx.setGrid([
+        [{ el: ready, x: 0.5, w: 2, onSelect: function () { ctx.go('question'); } }],
+        toggles.items.concat([{ el: quit, onSelect: function () { CQ.UI.confirmQuit(ctx); } }])
+      ]);
       return { back: function () { CQ.UI.confirmQuit(ctx); } };
     }
   };

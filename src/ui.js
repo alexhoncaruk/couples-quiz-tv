@@ -102,6 +102,37 @@
     return String(text).replace(/\{name\}/g, name);
   }
 
+  /* The two mute buttons (music, sound effects) used on the title and between turns.
+   * Returns { el, items } so the screen can put the items in its focus grid. */
+  function soundToggles(app) {
+    var box = h('div', { class: 'toggles' });
+    function make(key, label, apply) {
+      var el = h('div', { class: 'btn toggle focusable' });
+      var item = {
+        el: el,
+        sound: null, // played below, so muting effects still gives a click and unmuting too
+        paint: function () {
+          var on = !!app.settings[key];
+          el.textContent = label + (on ? ': On' : ': Off');
+          el.className = el.className.replace(/(^|\s)off(?=\s|$)/g, '') + (on ? '' : ' off');
+        },
+        onSelect: function () {
+          var on = !app.settings[key];
+          app.settings[key] = on;
+          app.saveSettings();
+          if (on) { apply(on); CQ.Sound.play('toggle'); } else { CQ.Sound.play('toggle'); apply(on); }
+          item.paint();
+        }
+      };
+      item.paint();
+      box.appendChild(el);
+      return item;
+    }
+    var music = make('musicOn', '\u266B Music', function (on) { CQ.Sound.setMusicOn(on); });
+    var sfx = make('sound', 'Sounds', function (on) { CQ.Sound.setSfx(on); });
+    return { el: box, items: [music, sfx] };
+  }
+
   var LETTERS = ['A', 'B', 'C', 'D'];
 
   CQ.UI = {
@@ -115,6 +146,7 @@
     hideToast: hideToast,
     seconds: seconds,
     confirmQuit: confirmQuit,
+    soundToggles: soundToggles,
     fillName: fillName,
     LETTERS: LETTERS
   };

@@ -45,6 +45,10 @@
         return [{ el: b, onSelect: e[2] }];
       });
 
+      var toggles = CQ.UI.soundToggles(app);
+      el.appendChild(toggles.el);
+      rows.push(toggles.items);
+
       var rec = recordLine(app.players);
       if (rec) { el.appendChild(h('div', { class: 'record small' }, rec)); }
 

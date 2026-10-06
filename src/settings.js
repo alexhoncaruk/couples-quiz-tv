@@ -3,12 +3,14 @@
 (function (root) {
   'use strict';
 
-  var VERSION = 2;
+  var VERSION = 3;
 
   var DEFAULTS = {
     version: VERSION,
     sound: true,
+    musicOn: true,
     music: 'medium',
+    screenFit: 100,
     timerTrivia: true,
     timerKnowMe: false,
     timerSeconds: 20,
@@ -17,17 +19,21 @@
     historyTrap: true
   };
 
-  /* Saved settings + defaults for anything missing. Version 1 had sound off by
-   * default and no music, so those two are switched on once when upgrading. */
+  var MUSIC_VOLUMES = { low: true, medium: true, high: true };
+
+  /* Saved settings + defaults for anything missing. Sound effects and music are switched
+   * on once when upgrading from version 1 (sound off by default) or 2 (music volume
+   * could be "off"; muting is now a separate on/off). */
   function migrate(saved) {
     var s = {};
     for (var k in DEFAULTS) {
       if (DEFAULTS.hasOwnProperty(k)) { s[k] = saved && saved.hasOwnProperty(k) ? saved[k] : DEFAULTS[k]; }
     }
-    if (!saved || !(saved.version >= 2)) {
+    if (!saved || !(saved.version >= 3)) {
       s.sound = true;
-      s.music = 'medium';
+      s.musicOn = true;
     }
+    if (!MUSIC_VOLUMES[s.music]) { s.music = 'medium'; }
     s.version = VERSION;
     return s;
   }
