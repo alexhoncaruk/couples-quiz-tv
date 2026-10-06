@@ -52,6 +52,10 @@
     this.el.appendChild(h('div', null, 'KEY DEBUG  (d or Up x5 to close)'));
     this.el.appendChild(h('div', { class: 'debug-big' }, big));
     this.el.appendChild(h('div', null, this.lines.join('\n') || '-'));
+    var errors = root.CQ_ERRORS || [];
+    if (errors.length) {
+      this.el.appendChild(h('div', { class: 'bad' }, 'errors: ' + errors.slice(-3).join(' | ')));
+    }
     this.el.appendChild(h('div', { class: 'small' },
       'inner ' + w + 'x' + hgt +
       '  client ' + root.document.documentElement.clientWidth + 'x' + root.document.documentElement.clientHeight +

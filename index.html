@@ -4,14 +4,24 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title>Couples Quiz TV</title>
-  <link rel="stylesheet" href="styles/main.css?v=3">
+  <link rel="stylesheet" href="styles/main.css?v=4">
   <script>
-    /* There are no dev tools on a TV, so show any script error on screen. */
+    /* There are no dev tools on a TV, so the game's own script errors are kept for the
+     * debug overlay (Up x5) and shown on screen only if the game fails to start.
+     * Errors from scripts the TV browser injects into every page (TV Bro does this)
+     * arrive as a bare "Script error." with no file; they are not ours and are ignored. */
+    window.CQ_ERRORS = [];
     window.onerror = function (msg, src, line) {
+      var ours = src && src.indexOf(location.protocol + '//' + location.host) === 0;
+      if (!ours || /^Script error\.?$/.test(String(msg))) { return true; }
+      var text = msg + ' (' + src.split('/').pop() + ':' + line + ')';
+      window.CQ_ERRORS.push(text);
+      var started = window.CQ && window.CQ.App && window.CQ.App.router && window.CQ.App.router.name;
       var box = document.getElementById('fatal');
-      if (!box) { return false; }
-      box.style.display = 'block';
-      box.appendChild(document.createTextNode(msg + ' (' + (src || '').split('/').pop() + ':' + line + ')\n'));
+      if (!started && box) {
+        box.style.display = 'block';
+        box.appendChild(document.createTextNode(text + '\n'));
+      }
       return false;
     };
   </script>
@@ -31,27 +41,27 @@
   </div>
   <noscript>This game needs JavaScript.</noscript>
 
-  <script src="src/nav.js?v=3"></script>
-  <script src="src/input.js?v=3"></script>
-  <script src="src/storage.js?v=3"></script>
-  <script src="src/questions.js?v=3"></script>
-  <script src="src/game.js?v=3"></script>
-  <script src="src/settings.js?v=3"></script>
-  <script src="src/sound.js?v=3"></script>
-  <script src="src/ui.js?v=3"></script>
-  <script src="src/debug.js?v=3"></script>
-  <script src="src/router.js?v=3"></script>
-  <script src="src/screens/title.js?v=3"></script>
-  <script src="src/screens/settings.js?v=3"></script>
-  <script src="src/screens/remote.js?v=3"></script>
-  <script src="src/screens/howto.js?v=3"></script>
-  <script src="src/screens/setup.js?v=3"></script>
-  <script src="src/screens/names.js?v=3"></script>
-  <script src="src/screens/category.js?v=3"></script>
-  <script src="src/screens/interstitial.js?v=3"></script>
-  <script src="src/screens/question.js?v=3"></script>
-  <script src="src/screens/reveal.js?v=3"></script>
-  <script src="src/screens/results.js?v=3"></script>
-  <script src="src/main.js?v=3"></script>
+  <script src="src/nav.js?v=4"></script>
+  <script src="src/input.js?v=4"></script>
+  <script src="src/storage.js?v=4"></script>
+  <script src="src/questions.js?v=4"></script>
+  <script src="src/game.js?v=4"></script>
+  <script src="src/settings.js?v=4"></script>
+  <script src="src/sound.js?v=4"></script>
+  <script src="src/ui.js?v=4"></script>
+  <script src="src/debug.js?v=4"></script>
+  <script src="src/router.js?v=4"></script>
+  <script src="src/screens/title.js?v=4"></script>
+  <script src="src/screens/settings.js?v=4"></script>
+  <script src="src/screens/remote.js?v=4"></script>
+  <script src="src/screens/howto.js?v=4"></script>
+  <script src="src/screens/setup.js?v=4"></script>
+  <script src="src/screens/names.js?v=4"></script>
+  <script src="src/screens/category.js?v=4"></script>
+  <script src="src/screens/interstitial.js?v=4"></script>
+  <script src="src/screens/question.js?v=4"></script>
+  <script src="src/screens/reveal.js?v=4"></script>
+  <script src="src/screens/results.js?v=4"></script>
+  <script src="src/main.js?v=4"></script>
 </body>
 </html>
