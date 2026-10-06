@@ -5,8 +5,17 @@ A 2-player quiz game for couples, played on a TV with nothing but a D-pad remote
 It's one static web page: open it in a TV browser and play hot-seat, passing one remote
 back and forth.
 
-- **Trivia**: Mixed trivia, Movies & TV, Geography, plus your own Custom category.
-  100 points per right answer plus up to 50 for speed, with a 20-second timer.
+- **1,668 questions in 31 categories**, so casual play doesn't repeat for weeks:
+  - 21 trivia categories with 60 to 91 questions each: Mixed, Movies & TV, Music,
+    Geography, Travel & landmarks, Spain, History, Science & nature, Space, Animals,
+    Human body, Food & drink, Sports, Words & languages, Art & books, Tech & internet,
+    Brands, Cartoons & Disney, Games, Holidays & traditions, Myths & legends.
+  - 7 "about you" sets: How well do you know me? (50), Love & us, Food & taste, Dreams &
+    future, Childhood & memories, Would you rather… and Habits & quirks (40 each).
+  - **Everything mix** and **Know-me mix** combine all of them, plus your own **Custom**
+    category.
+- **Trivia scoring**: 100 points per right answer plus up to 50 for speed, with a
+  20-second timer.
 - **How well do you know me?**: one of you secretly answers 5 questions about yourself
   (each answer disappears as soon as it's locked in), then the other guesses all 5 one by
   one. A match is a point. Then you swap.
@@ -200,8 +209,16 @@ Or by hand: copy `data/questions/custom.json` to `data/questions/music.json`, ch
 ```
 
 The category screen is built from the manifest, so the new category appears straight
-away. Use `"mode":"knowme"` for another "about each other" category. The game remembers
-which questions you've already played (per category, on that TV) and serves new ones first.
+away. Use `"mode":"knowme"` for another "about each other" category. A manifest line
+with `"mix":"trivia"` (or `"knowme"`) instead of `"file"` makes a mix of every category of
+that kind.
+
+**No repeats:** the game remembers every question you've played on that TV, across all
+categories and mixes, and always serves unplayed ones first. A category only starts
+repeating once you've seen all of its questions, and then only that category starts over.
+At about 20 games a week, the 1,668 questions last roughly two months before anything
+comes back. Question ids must be unique across all files (the tool's `add` command takes
+care of that).
 
 ## How the game works
 
@@ -219,6 +236,7 @@ which questions you've already played (per category, on that TV) and serves new 
   "Script error.") are ignored, and the game's own errors are listed in the debug overlay.
 - The end screen shows the winner, accuracy, fastest right answer and best streak, and
   the title screen keeps an all-time record for each pair of names.
+- Player names can be up to 14 letters.
 - Names, settings, records and played-question history are saved in the TV browser's
   localStorage. *Settings → Reset saved data* wipes them.
 
