@@ -1,0 +1,31 @@
+{
+  "category": "know-me",
+  "mode": "knowme",
+  "questions": [
+    {"id":"know-me-001","question":"{name}'s perfect Sunday morning is…","options":["Sleeping in until noon","A long brunch","A workout or a run","Coffee and scrolling in bed"],"tags":["lifestyle"]},
+    {"id":"know-me-002","question":"If {name} won the lottery tomorrow, the first thing they'd do is…","options":["Quit their job on the spot","Buy a home","Book a huge trip","Tell nobody and invest it"],"tags":["money"]},
+    {"id":"know-me-003","question":"{name}'s go-to comfort food is…","options":["Pizza","Chocolate or sweets","A big bowl of pasta","A family recipe from home"],"tags":["food"]},
+    {"id":"know-me-004","question":"On a free evening, {name} would rather…","options":["Watch a series on the sofa","Go out for dinner or drinks","Play a game","Read or learn something"],"tags":["lifestyle"]},
+    {"id":"know-me-005","question":"{name}'s biggest pet peeve is…","options":["People being late","Loud chewing","A messy home","Slow walkers"],"tags":["personality"]},
+    {"id":"know-me-006","question":"Which superpower would {name} pick?","options":["Flying","Teleportation","Reading minds","Being invisible"],"tags":["fun"]},
+    {"id":"know-me-007","question":"{name}'s dream holiday is…","options":["Beach and cocktails","A big city break","Mountains and hiking","A road trip with no plan"],"tags":["travel"]},
+    {"id":"know-me-008","question":"If {name} could only eat one cuisine forever, it would be…","options":["Italian","Japanese","Spanish","Mexican"],"tags":["food"]},
+    {"id":"know-me-009","question":"In a zombie apocalypse, {name} would be…","options":["The leader with a plan","The one who finds the food","The first to get bitten","Hiding and somehow surviving"],"tags":["fun"]},
+    {"id":"know-me-010","question":"{name}'s morning drink of choice is…","options":["Coffee","Tea","Juice or a smoothie","Just water"],"tags":["food"]},
+    {"id":"know-me-011","question":"When {name} is stressed, they usually…","options":["Need time alone","Want to talk it through","Work it off with exercise","Reach for snacks"],"tags":["personality"]},
+    {"id":"know-me-012","question":"{name}'s ideal date night is…","options":["A fancy dinner","A cosy movie night at home","Something active or adventurous","Cocktails and dancing"],"tags":["love"]},
+    {"id":"know-me-013","question":"Which chore does {name} hate the most?","options":["Washing the dishes","Laundry","Cleaning the bathroom","Vacuuming"],"tags":["home"]},
+    {"id":"know-me-014","question":"{name} would most like to live…","options":["In a big city centre","By the sea","In the mountains","In a quiet village"],"tags":["lifestyle"]},
+    {"id":"know-me-015","question":"What is {name} most likely to splurge on?","options":["Food and restaurants","Clothes and shoes","Gadgets and tech","Travel"],"tags":["money"]},
+    {"id":"know-me-016","question":"{name}'s favourite season is…","options":["Spring","Summer","Autumn","Winter"],"tags":["lifestyle"]},
+    {"id":"know-me-017","question":"At a party, {name} is usually…","options":["On the dance floor","Chatting in the kitchen","Petting the host's dog or cat","Planning a polite early exit"],"tags":["personality"]},
+    {"id":"know-me-018","question":"If {name} were an animal, they'd be a…","options":["Cat","Dog","Owl","Dolphin"],"tags":["fun"]},
+    {"id":"know-me-019","question":"{name}'s guilty pleasure is…","options":["Reality TV","Junk food","Online shopping","Cheesy music"],"tags":["fun"]},
+    {"id":"know-me-020","question":"If {name} had to give one up for a year, they'd give up…","options":["Social media","Chocolate and sweets","Coffee","Streaming series"],"tags":["lifestyle"]},
+    {"id":"know-me-021","question":"{name} feels most loved through…","options":["Kind words","Quality time together","Hugs and cuddles","Help with everyday things"],"tags":["love"]},
+    {"id":"know-me-022","question":"{name}'s ideal birthday is…","options":["A big party with friends","A small dinner with close people","A trip somewhere new","A quiet day with no fuss"],"tags":["lifestyle"]},
+    {"id":"know-me-023","question":"Everyone is safe, but the house is on fire: what does {name} grab first?","options":["Phone","Laptop","Photos and keepsakes","Wallet and documents"],"tags":["fun"]},
+    {"id":"know-me-024","question":"If money didn't matter, {name}'s dream job would be…","options":["Chef or restaurant owner","Travel writer or photographer","Running their own company","Musician or artist"],"tags":["dreams"]},
+    {"id":"know-me-025","question":"What is {name} most afraid of?","options":["Spiders and insects","Heights","Deep water","Public speaking"],"tags":["personality"]}
+  ]
+}

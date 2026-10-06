@@ -1,0 +1,9 @@
+{
+  "categories": [
+    {"id":"mixed","name":"Mixed trivia","mode":"trivia","file":"questions/mixed.json","description":"A bit of everything: animals, science, food and more."},
+    {"id":"know-me","name":"How well do you know me?","mode":"knowme","file":"questions/know-me.json","description":"One answers about themselves in secret, the other guesses."},
+    {"id":"movies-tv","name":"Movies & TV","mode":"trivia","file":"questions/movies-tv.json","description":"Blockbusters, sitcoms and binge-worthy series."},
+    {"id":"geography","name":"Geography","mode":"trivia","file":"questions/geography.json","description":"Capitals, rivers, landmarks, and some Spain."},
+    {"id":"custom","name":"Custom","mode":"trivia","file":"questions/custom.json","description":"Your own questions. Starts with food & drink."}
+  ]
+}
