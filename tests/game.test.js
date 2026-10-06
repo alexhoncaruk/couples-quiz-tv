@@ -92,29 +92,51 @@
     eq(Game.turnInfo(g).actor, 0);
   });
 
-  test('game: know-me flow - secret, guess, match scores 1 point for the guesser', function () {
-    var g = Game.create({ mode: 'knowme', players: ['Ana', 'Ben'], questions: knowme(2), total: 2 });
-    eq(g.phase, 'secret');
-    var t = Game.turnInfo(g);
-    eq([t.subject, t.guesser], [0, 1], 'Ana answers about herself first, Ben guesses');
-    Game.lockSecret(g, 2);
+  test('game: know-me blocks - 10 questions are 5 + 5, always an even number of blocks', function () {
+    function sizes(n) { return Game.knowmeBlocks(n).map(function (b) { return b.count; }); }
+    eq(sizes(10), [5, 5]);
+    eq(sizes(5), [3, 2]);
+    eq(sizes(15), [4, 4, 4, 3]);
+    eq(sizes(20), [5, 5, 5, 5]);
+    eq(Game.knowmeBlocks(20).map(function (b) { return b.subject; }), [0, 1, 0, 1]);
+  });
+
+  test('game: know-me - one player answers a whole block, then the other guesses it in a row', function () {
+    var g = Game.create({ mode: 'knowme', players: ['Ana', 'Ben'], questions: knowme(10), total: 10 });
+    var log = [];
+    var secrets = [2, 0, 1, 3, 2];
+    // Ana answers 5 questions about herself, without anyone guessing in between.
+    for (var i = 0; i < 5; i++) {
+      eq(g.phase, 'secret');
+      var t = Game.turnInfo(g);
+      eq([t.subject, t.blockPos, t.blockSize], [0, i + 1, 5]);
+      var done = Game.lockSecret(g, secrets[i]);
+      eq(done, i === 4, 'block is done only after the 5th answer');
+    }
+    // Ben guesses those 5 answers, with a reveal after each.
     eq(g.phase, 'guess');
-    var r = Game.guess(g, 2, 3000);
-    ok(r.match);
-    eq(r.secret, 2);
-    eq(g.players[1].score, 1);
-    eq(g.players[0].score, 0);
-    eq(g.secret, null, 'secret is cleared after the reveal');
-    Game.next(g);
-    t = Game.turnInfo(g);
-    eq([t.subject, t.guesser], [1, 0], 'roles swap');
-    Game.lockSecret(g, 0);
-    r = Game.guess(g, 1, 1000);
-    ok(!r.match);
-    eq(g.players[0].score, 0);
-    eq(Game.next(g), false);
+    for (i = 0; i < 5; i++) {
+      t = Game.turnInfo(g);
+      eq([t.guesser, t.blockPos], [1, i + 1]);
+      var r = Game.guess(g, i < 3 ? secrets[i] : (secrets[i] + 1) % 4, 1000);
+      log.push(r.match);
+      eq(r.secret, secrets[i]);
+      Game.next(g);
+    }
+    eq(log, [true, true, true, false, false]);
+    eq(g.players[1].score, 3);
+    // Then the roles swap: Ben answers about himself.
+    eq(g.phase, 'secret');
+    eq(Game.turnInfo(g).subject, 1);
+    for (i = 0; i < 5; i++) { Game.lockSecret(g, 1); }
+    for (i = 0; i < 5; i++) {
+      eq(Game.turnInfo(g).guesser, 0);
+      Game.guess(g, 1, 500);
+      Game.next(g);
+    }
     ok(Game.isOver(g));
-    eq(Game.summary(g).winner, 1);
+    eq(g.players[0].score, 5);
+    eq(Game.summary(g).winner, 0);
   });
 
   test('game: actions in the wrong phase throw', function () {

@@ -61,14 +61,17 @@
       });
 
       var last = Game.isLastTurn(game);
-      var next = CQ.UI.button(last ? 'See results' : 'Next', 'primary');
+      var nextIsGuess = !last && game.mode === 'knowme' && Game.turnInfo(game).blockPos < Game.turnInfo(game).blockSize;
+      var next = CQ.UI.button(last ? 'See results' : (nextIsGuess ? 'Next guess' : 'Next'), 'primary');
       var quit = CQ.UI.button('Quit game');
       el.appendChild(h('div', { class: 'btn-row' }, [quit, next]));
       var quitItem = { el: quit, onSelect: function () { CQ.UI.confirmQuit(ctx); } };
       var nextItem = {
         el: next,
         onSelect: function () {
-          if (Game.next(game)) { ctx.go('interstitial'); } else { ctx.go('results'); }
+          if (!Game.next(game)) { ctx.go('results'); return; }
+          // The next guess of the same block keeps the remote with the same person.
+          ctx.go(game.phase === 'guess' ? 'question' : 'interstitial');
         }
       };
       ctx.setGrid([[quitItem, nextItem]], { focus: nextItem });

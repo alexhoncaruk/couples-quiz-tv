@@ -16,7 +16,7 @@
       el.appendChild(h('div', { class: 'howto' }, [
         p(['One remote, two players. Take turns and ', b('pass the remote'), ' when the screen tells you to. Use the arrows to move and ', b('OK'), ' to choose.']),
         p([b('Trivia: '), 'answer your own questions. A right answer is worth ', b('100 points'), ', plus up to ', b('50 bonus points'), ' for answering fast. If the number of questions is odd, the last one is a comeback question for whoever is behind.']),
-        p([b('How well do you know me? '), 'One of you answers a question about yourself while the other looks away. The TV only shows "Answer locked in". Then the other guesses what you picked: a match is ', b('1 point'), '. Then you swap.']),
+        p([b('How well do you know me? '), 'One of you answers 5 questions about yourself while the other looks away. Each answer disappears as soon as it is locked in. Then the other guesses your 5 answers one by one: a match is ', b('1 point'), '. Then you swap.']),
         p([b('Back'), ' takes you one screen back. During a game it asks before quitting. Remote acting strange? Press ', b('Up 5 times'), ' to see what keys the TV receives, or try Settings → Remote check.']),
         p([b('TV Bro: '), 'if the remote moves a mouse pointer, hold ', b('OK'), ' and pick the ', b('D-pad'), ' button. In that mode TV Bro uses Back to return to the pointer, so use the on-screen Back and Quit buttons instead.'])
       ]));

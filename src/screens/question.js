@@ -1,7 +1,7 @@
 /* Question screen: the question, four answers in a 2x2 grid and the timer bar.
- * In know-me mode this is used twice per turn: first the subject secretly locks in
- * their answer (then the answers disappear behind "Answer locked in"), then the
- * guesser guesses. */
+ * In know-me mode the subject first locks in a whole block of answers about themselves
+ * (each one disappears as soon as it is picked; after the last one the screen shows only
+ * "All answers locked in"), then the guesser guesses them one by one. */
 (function (root) {
   'use strict';
   var CQ = root.CQ;
@@ -26,6 +26,8 @@
 
       // Header: counter + scores.
       var label = 'Question ' + t.number + ' / ' + t.total + (t.comeback ? '  ·  Comeback question' : '');
+      if (phase === 'secret') { label = 'Your answer ' + t.blockPos + ' of ' + t.blockSize; }
+      if (phase === 'guess') { label = 'Guess ' + t.blockPos + ' of ' + t.blockSize + '  ·  Question ' + t.number + ' / ' + t.total; }
       el.appendChild(h('div', { class: 'topbar' }, [
         h('div', { class: 'topbar-left' }, label),
         CQ.UI.scoreboard(game, phase === 'secret' ? t.subject : t.actor)
@@ -104,9 +106,15 @@
         stopTimer();
         var elapsed = watch.elapsed();
         if (phase === 'secret') {
-          Game.lockSecret(game, i);
+          var blockDone = Game.lockSecret(game, i);
           CQ.Sound.play('lock');
-          showLocked();
+          if (blockDone) {
+            showLocked();
+          } else {
+            // Same player carries on with the next question; the pick is already gone.
+            ctx.go('question');
+            ctx.toast('Locked in! Answer ' + t.blockPos + ' of ' + t.blockSize, 1500);
+          }
           return;
         }
         var result = phase === 'guess' ? Game.guess(game, i, elapsed) : Game.answer(game, i, elapsed);
@@ -114,13 +122,14 @@
         ctx.go('reveal');
       }
 
-      // Hide the secret answer straight away and hand over to the guesser.
+      // Last answer of the block: hide everything and hand over to the guesser.
       function showLocked() {
+        CQ.UI.hideToast();
         CQ.UI.clear(body);
         var pass = CQ.UI.button('Pass the remote to ' + names[t.guesser], 'primary');
         body.appendChild(h('div', { class: 'locked' }, [
           h('div', { class: 'lock-icon' }),
-          h('div', { class: 'h1' }, 'Answer locked in'),
+          h('div', { class: 'h1' }, t.blockSize > 1 ? 'All ' + t.blockSize + ' answers locked in' : 'Answer locked in'),
           h('div', { class: 'sub' }, names[t.guesser] + ' can look now.'),
           h('div', { class: 'btn-row' }, pass)
         ]));

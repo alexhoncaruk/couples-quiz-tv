@@ -1,5 +1,5 @@
-/* "Pass the remote" screen shown before every turn (and between the two halves of a
- * know-me turn), so nobody answers on someone else's turn. */
+/* "Pass the remote" screen shown whenever the remote changes hands: before every trivia
+ * question, and before each know-me block of secret answers and of guesses. */
 (function (root) {
   'use strict';
   var CQ = root.CQ;
@@ -19,11 +19,13 @@
 
       if (game.phase === 'secret') {
         who = t.subject;
-        line = [names[t.subject] + ' answers about themselves. ', h('b', null, names[t.guesser] + ', look away!')];
+        line = [names[t.subject] + ' answers ' + t.blockSize + (t.blockSize === 1 ? ' question' : ' questions') +
+          ' about themselves. ', h('b', null, names[t.guesser] + ', look away!')];
+        counter = 'Questions ' + t.number + '-' + (t.number + t.blockSize - 1) + ' of ' + t.total;
       } else if (game.phase === 'guess') {
         who = t.guesser;
-        line = names[t.guesser] + ', guess what ' + names[t.subject] + ' picked.';
-        counter = 'Answer locked in. Your turn to guess!';
+        line = names[t.guesser] + ', guess ' + names[t.subject] + '\'s ' + t.blockSize + (t.blockSize === 1 ? ' answer.' : ' answers, one by one.');
+        counter = 'Answers locked in. Your turn to guess!';
       } else {
         who = t.actor;
         line = t.comeback ? 'Comeback question for ' + names[who] + '!' : 'Your question is coming up.';

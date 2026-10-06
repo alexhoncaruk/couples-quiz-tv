@@ -7,8 +7,9 @@ back and forth.
 
 - **Trivia**: Mixed trivia, Movies & TV, Geography, plus your own Custom category.
   100 points per right answer plus up to 50 for speed, with a 20-second timer.
-- **How well do you know me?**: one of you secretly answers a question about yourself
-  (the TV only shows "Answer locked in"), the other guesses. A match is a point. Then swap.
+- **How well do you know me?**: one of you secretly answers 5 questions about yourself
+  (each answer disappears as soon as it's locked in), then the other guesses all 5 one by
+  one. A match is a point. Then you swap.
 - **Sound**: clicks, a "pass the remote" chime, jingles for right and wrong answers, a
   ticking clock, a winner fanfare and a funky background loop. All of it is synthesized
   live, so there are no audio files. Volume and on/off are in Settings.
@@ -209,8 +210,13 @@ which questions you've already played (per category, on that TV) and serves new 
   question** for whoever is behind.
 - Trivia scoring: 100 points for a right answer, plus up to 50 for speed (50 at 0 s,
   0 when the 20 s run out). Timing out counts as wrong.
-- Know-me: no timer by default (Settings can turn it on). The subject's secret pick is
-  never timed.
+- Know-me is played in blocks of up to 5: one player answers the whole block about
+  themselves, then the other guesses it, then roles swap. 10 questions = 5 + 5,
+  20 = 5 + 5 + 5 + 5, 5 = 3 + 2, 15 = 4 + 4 + 4 + 3. No timer by default (Settings can turn
+  it on for the guesses). The secret answers are never timed.
+- Script errors: the red error box only appears if the game itself fails to start.
+  Errors from scripts the TV browser injects into pages (TV Bro shows these as
+  "Script error.") are ignored, and the game's own errors are listed in the debug overlay.
 - The end screen shows the winner, accuracy, fastest right answer and best streak, and
   the title screen keeps an all-time record for each pair of names.
 - Names, settings, records and played-question history are saved in the TV browser's

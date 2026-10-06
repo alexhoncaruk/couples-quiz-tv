@@ -5,18 +5,45 @@
  * of questions, the last one is a "comeback question" for whoever is behind (on a tie
  * the normal turn order decides).
  *
- * How well do you know me: on each turn one player (the subject) secretly picks their
- * own answer, then the other (the guesser) guesses it. A match scores 1 point for the
- * guesser. Roles swap every turn.
+ * How well do you know me: played in blocks of up to 5 questions. One player (the
+ * subject) secretly answers the whole block about themselves, then the other (the
+ * guesser) guesses those answers one by one, each followed by a reveal. A match scores
+ * 1 point for the guesser. Then the roles swap for the next block.
  *
- * Phases of a game: 'answer' (trivia) or 'secret' -> 'guess' (know me), then 'reveal',
- * then the next turn, and finally 'over'. */
+ * Phases of a game: 'answer' (trivia), or 'secret' (x block) then 'guess' (know me),
+ * then 'reveal' after every answer or guess, and finally 'over'. */
 (function (root) {
   'use strict';
 
   var BASE_POINTS = 100;
   var MAX_SPEED_BONUS = 50;
   var DEFAULT_SPEED_WINDOW_S = 20;
+  var KNOWME_BLOCK = 5;
+
+  /* Splits a know-me game into blocks of at most 5 questions, always an even number of
+   * blocks so both players get a turn as the subject: 5 -> 3+2, 10 -> 5+5,
+   * 15 -> 4+4+4+3, 20 -> 5+5+5+5. Block k is about player k % 2. */
+  function knowmeBlocks(total) {
+    var n = 2 * Math.ceil(total / (2 * KNOWME_BLOCK));
+    var base = Math.floor(total / n);
+    var extra = total % n;
+    var blocks = [];
+    var start = 0;
+    for (var k = 0; k < n; k++) {
+      var count = base + (k < extra ? 1 : 0);
+      if (count > 0) { blocks.push({ start: start, count: count, subject: k % 2 }); }
+      start += count;
+    }
+    return blocks;
+  }
+
+  function blockAt(game, i) {
+    for (var k = 0; k < game.blocks.length; k++) {
+      var b = game.blocks[k];
+      if (i >= b.start && i < b.start + b.count) { return b; }
+    }
+    return null;
+  }
 
   function newPlayer(name) {
     return { name: name, score: 0, answered: 0, correct: 0, fastestMs: null, streak: 0, bestStreak: 0 };
@@ -39,7 +66,8 @@
       phase: mode === 'knowme' ? 'secret' : 'answer',
       timerSeconds: opts.timerSeconds || 0,
       speedWindow: opts.timerSeconds || DEFAULT_SPEED_WINDOW_S,
-      secret: null,
+      blocks: mode === 'knowme' ? knowmeBlocks(total) : [],
+      secrets: {},
       last: null,
       history: []
     };
@@ -59,12 +87,13 @@
   }
 
   function isComeback(game, i) {
-    return game.total > 1 && game.total % 2 === 1 && i === game.total - 1;
+    return game.mode === 'trivia' && game.total > 1 && game.total % 2 === 1 && i === game.total - 1;
   }
 
   /* Index of the player who can score on turn i (trivia: the answerer, know me: the guesser). */
   function actorIndex(game, i) {
-    var normal = game.mode === 'knowme' ? (i + 1) % 2 : i % 2;
+    if (game.mode === 'knowme') { return 1 - blockAt(game, i).subject; }
+    var normal = i % 2;
     if (isComeback(game, i)) {
       var a = game.players[0].score;
       var b = game.players[1].score;
@@ -78,6 +107,7 @@
   function turnInfo(game) {
     var i = game.index;
     var actor = actorIndex(game, i);
+    var block = game.mode === 'knowme' ? blockAt(game, i) : null;
     return {
       index: i,
       number: i + 1,
@@ -85,7 +115,10 @@
       actor: actor,
       guesser: actor,
       subject: game.mode === 'knowme' ? 1 - actor : actor,
-      comeback: isComeback(game, i)
+      comeback: isComeback(game, i),
+      blockPos: block ? i - block.start + 1 : 1, // 1-based position inside the block
+      blockSize: block ? block.count : 1,
+      blockStart: block ? i === block.start : true
     };
   }
 
@@ -139,20 +172,30 @@
     return result;
   }
 
-  /* Know me, step 1: the subject locks in their own answer. */
+  /* Know me, step 1: the subject locks in their own answer, then moves on to the next
+   * question of the block. Returns true when the whole block is locked in and it is the
+   * guesser's turn. */
   function lockSecret(game, choice) {
     expectPhase(game, 'secret');
     if (!(choice >= 0 && choice <= 3)) { throw new Error('Secret answer must be 0-3'); }
-    game.secret = choice;
+    game.secrets[game.index] = choice;
+    var block = blockAt(game, game.index);
+    if (game.index < block.start + block.count - 1) {
+      game.index++;
+      return false;
+    }
+    game.index = block.start;
     game.phase = 'guess';
+    return true;
   }
 
-  /* Know me, step 2: the guesser guesses. choice -1 = timer ran out. */
+  /* Know me, step 2: the guesser guesses one answer. choice -1 = timer ran out. */
   function guess(game, choice, elapsedMs) {
     expectPhase(game, 'guess');
     var t = turnInfo(game);
     var q = currentQuestion(game);
-    var match = choice >= 0 && choice === game.secret;
+    var secret = game.secrets[game.index];
+    var match = choice >= 0 && choice === secret;
     award(game.players[t.guesser], match, match ? 1 : 0, elapsedMs);
     var result = {
       type: 'knowme',
@@ -160,7 +203,7 @@
       subject: t.subject,
       guesser: t.guesser,
       actor: t.guesser,
-      secret: game.secret,
+      secret: secret,
       choice: choice,
       match: match,
       timedOut: choice < 0,
@@ -169,21 +212,24 @@
     };
     game.history.push(result);
     game.last = result;
-    game.secret = null;
     game.phase = 'reveal';
     return result;
   }
 
-  /* Go to the next turn. Returns false when the game is over. */
+  /* Go to the next turn. Returns false when the game is over. In know-me mode the next
+   * turn is the next guess of the block, or the next block's secret answers. */
   function next(game) {
     expectPhase(game, 'reveal');
     game.index++;
-    game.secret = null;
     if (game.index >= game.total) {
       game.phase = 'over';
       return false;
     }
-    game.phase = game.mode === 'knowme' ? 'secret' : 'answer';
+    if (game.mode === 'knowme') {
+      game.phase = blockAt(game, game.index).start === game.index ? 'secret' : 'guess';
+    } else {
+      game.phase = 'answer';
+    }
     return true;
   }
 
@@ -250,7 +296,8 @@
     isOver: isOver,
     isLastTurn: isLastTurn,
     summary: summary,
-    Stopwatch: Stopwatch
+    Stopwatch: Stopwatch,
+    knowmeBlocks: knowmeBlocks
   };
 
   if (typeof module === 'object' && module.exports) {

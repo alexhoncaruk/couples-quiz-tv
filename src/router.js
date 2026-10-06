@@ -21,7 +21,7 @@
     category: ['setup', 'interstitial', 'title'],
     interstitial: ['question', 'results', 'title'],
     question: ['reveal', 'interstitial', 'title'],
-    reveal: ['interstitial', 'results', 'title'],
+    reveal: ['interstitial', 'question', 'results', 'title'],
     results: ['interstitial', 'category', 'title']
   };
 
