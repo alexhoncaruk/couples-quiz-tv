@@ -8,8 +8,9 @@
 
   var ROUND_OPTIONS = [5, 10, 15, 20];
   var PER_ROW = 4;
-  var ROW_H = 238; // must match .cat-row height in main.css
+  var ROW_H = 264; // must match .cat-row height in main.css
   var VIEW_H = 612; // visible height of the scrolling card area
+  var FULL_ROWS = Math.floor(VIEW_H / ROW_H); // rows that fit completely; the next one peeks in
 
   CQ.Screens.category = {
     hints: [['← → ↑ ↓', 'Move'], ['OK', 'Play'], ['BACK', 'Players']],
@@ -54,10 +55,14 @@
       var catsView = h('div', { class: 'cats-view', style: 'height:' + VIEW_H + 'px' }, cats);
       el.appendChild(catsView);
       var scrollY = 0;
+      // Scroll by whole rows so the top row is never cut in half.
+      var firstRow = 0;
       function scrollToRow(r) {
-        var top = r * ROW_H;
-        if (top < scrollY) { scrollY = top; }
-        if (top + ROW_H > scrollY + VIEW_H) { scrollY = top + ROW_H - VIEW_H; }
+        var before = firstRow;
+        if (r < firstRow) { firstRow = r; }
+        if (r > firstRow + FULL_ROWS - 1) { firstRow = r - FULL_ROWS + 1; }
+        if (firstRow !== before) { ctx.pauseHover(600); }
+        scrollY = firstRow * ROW_H;
         var t = 'translateY(' + (-scrollY) + 'px)';
         cats.style.webkitTransform = t;
         cats.style.transform = t;
@@ -71,8 +76,7 @@
           cats.appendChild(rowEl);
           rows.push([]);
         }
-        var badge = cat.mix ? 'Mix' : '';
-        badge += (badge ? ' · ' : '') + (cat.mode === 'knowme' ? 'About each other' : 'Trivia');
+        var badge = (cat.mix ? 'Mix · ' : '') + (cat.mode === 'knowme' ? 'About you' : 'Trivia');
         var card = h('div', { class: 'cat-card focusable' + (cat.mode === 'knowme' ? ' knowme' : '') }, [
           h('div', { class: 'cat-name' }, cat.name),
           h('div', { class: 'cat-desc' }, cat.description || ''),

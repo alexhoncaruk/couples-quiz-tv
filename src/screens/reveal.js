@@ -56,7 +56,10 @@
         var m = marks[i];
         opts.appendChild(h('div', { class: 'option focusable ' + (m ? m.cls : 'dim') }, [
           h('span', { class: 'letter' }, CQ.UI.LETTERS[i]),
-          h('span', { class: 'option-text' }, [opt, m ? h('span', { class: 'tag' }, m.tag) : null])
+          h('span', { class: 'option-text' }, [
+            game.mode === 'knowme' ? CQ.UI.fillName(opt, names[r.subject]) : opt,
+            m ? h('span', { class: 'tag' }, m.tag) : null
+          ])
         ]));
       });
 

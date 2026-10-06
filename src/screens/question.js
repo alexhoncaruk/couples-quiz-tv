@@ -61,7 +61,7 @@
       var items = q.options.map(function (opt, i) {
         var o = h('div', { class: 'option focusable' }, [
           h('span', { class: 'letter' }, CQ.UI.LETTERS[i]),
-          h('span', { class: 'option-text' }, opt)
+          h('span', { class: 'option-text' }, game.mode === 'knowme' ? CQ.UI.fillName(opt, subjectName) : opt)
         ]);
         body.appendChild(o);
         return { el: o, sound: null, onSelect: function () { choose(i); } };

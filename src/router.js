@@ -47,6 +47,7 @@
     this.layer = null; // focus layer of the screen
     this.modal = null; // focus layer of an open confirm dialog
     this.enterLockUntil = 0;
+    this.hoverLockUntil = 0;
     this.onDebug = null;
   }
 
@@ -86,7 +87,10 @@
       current: function () { return self.currentItem(self.layer); },
       setHints: function (hints) { self.setHints(hints); },
       confirm: function (opts, onYes, onNo) { self.confirm(opts, onYes, onNo); },
-      toast: function (msg, ms) { CQ.UI.toast(msg, ms); }
+      toast: function (msg, ms) { CQ.UI.toast(msg, ms); },
+      // After a screen scrolls, ignore hover for a moment: the scroll moves another
+      // item under a still mouse pointer, which would otherwise keep scrolling.
+      pauseHover: function (ms) { self.hoverLockUntil = Date.now() + (ms || 500); }
     };
   };
 
@@ -116,7 +120,7 @@
       row.forEach(function (item) {
         if (!item || !item.el || !item.el.addEventListener) { return; }
         item.el.addEventListener('mouseover', function () {
-          if (!active() || item.disabled) { return; }
+          if (!active() || item.disabled || Date.now() < self.hoverLockUntil) { return; }
           var pos = CQ.Nav.find(layer.rows, function (it) { return it === item; });
           if (pos && !CQ.Nav.same(pos, layer.pos)) { self.paint(layer, pos); }
         });
