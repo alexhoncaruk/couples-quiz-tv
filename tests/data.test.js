@@ -25,10 +25,27 @@
     });
   });
 
-  T.test('data: 30 questions per built-in trivia category, 25 know-me prompts', function () {
-    var minimum = { mixed: 30, 'movies-tv': 30, geography: 30, 'know-me': 25 };
+  T.test('data: big categories - 60+ per trivia category, 40+ per know-me set', function () {
     fileCats.forEach(function (cat) {
-      if (minimum[cat.id]) { T.ok(load(cat).questions.length >= minimum[cat.id], cat.id + ' has too few questions'); }
+      if (cat.id === 'custom') { return; }
+      var min = cat.mode === 'knowme' ? 40 : 60;
+      T.ok(load(cat).questions.length >= min, cat.id + ' has only ' + load(cat).questions.length + ' questions');
+    });
+  });
+
+  T.test('data: question ids are unique across all categories (the played-history is shared)', function () {
+    var seen = {};
+    fileCats.forEach(function (cat) {
+      load(cat).questions.forEach(function (q) {
+        T.ok(!seen[q.id], q.id + ' is used in ' + seen[q.id] + ' and ' + cat.id);
+        seen[q.id] = cat.id;
+      });
+    });
+  });
+
+  T.test('data: mix categories mix a mode that has categories', function () {
+    manifest.categories.filter(function (c) { return c.mix; }).forEach(function (mix) {
+      T.ok(fileCats.some(function (c) { return c.mode === mix.mix; }), mix.id);
     });
   });
 
