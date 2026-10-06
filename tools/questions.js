@@ -179,8 +179,19 @@ function format() {
   console.log('Formatted manifest and ' + m.categories.length + ' question files.');
 }
 
+var USAGE = [
+  'Couples Quiz TV - question tool',
+  '',
+  '  node tools/questions.js validate                  check the manifest and every question file',
+  '  node tools/questions.js list                      show categories and question counts',
+  '  node tools/questions.js add <category-id>         add a question by answering prompts',
+  '  node tools/questions.js new-category <id> "<Name>" [trivia|knowme] ["description"]',
+  '                                                    create a question file + manifest line',
+  '  node tools/questions.js format                    rewrite files in the standard layout'
+].join('\n');
+
 function usage(code) {
-  console.log(fs.readFileSync(__filename, 'utf8').split('\n').slice(1, 12).join('\n').replace(/^\/\* ?| ?\*\/?$/gm, ''));
+  console.log(USAGE);
   process.exit(code || 0);
 }
 
