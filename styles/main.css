@@ -346,34 +346,39 @@ html, body {
 }
 
 .cat-row {
-  height: 296px;
+  height: 316px;
 }
 
 .cat-card {
   display: inline-block;
   vertical-align: top;
   width: 520px;
-  height: 260px;
+  height: 290px;
   margin: 0 18px;
-  padding: 28px 32px;
+  padding: 24px 32px;
   text-align: left;
   white-space: normal;
+  overflow: hidden;
 }
 
 .cat-name {
   font-size: 46px;
   font-weight: 800;
-  margin-bottom: 10px;
+  line-height: 1.2;
+  margin-bottom: 8px;
 }
 
 .cat-desc {
   font-size: 32px;
   color: #c8cdf0;
+  max-height: 84px;
+  overflow: hidden;
 }
 
 .badge {
-  display: inline-block;
-  margin-top: 14px;
+  position: absolute;
+  left: 32px;
+  bottom: 16px;
   padding: 2px 18px;
   border-radius: 20px;
   font-size: 32px;

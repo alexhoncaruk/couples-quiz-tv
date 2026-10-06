@@ -61,6 +61,7 @@
     }
     if (this.instance && this.instance.unmount) { this.instance.unmount(); }
     this.closeModal();
+    CQ.UI.hideToast();
     CQ.UI.clear(this.screenEl);
     this.layer = null;
     this.name = name;

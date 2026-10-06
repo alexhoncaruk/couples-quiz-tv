@@ -64,6 +64,12 @@
   }
 
   var toastTimer = null;
+  function hideToast() {
+    var el = doc.getElementById('toast');
+    if (el) { el.style.display = 'none'; }
+    if (toastTimer) { root.clearTimeout(toastTimer); toastTimer = null; }
+  }
+
   function toast(message, ms) {
     var el = doc.getElementById('toast');
     if (!el) { return; }
@@ -106,6 +112,7 @@
     scoreboard: scoreboard,
     renderHints: renderHints,
     toast: toast,
+    hideToast: hideToast,
     seconds: seconds,
     confirmQuit: confirmQuit,
     fillName: fillName,
