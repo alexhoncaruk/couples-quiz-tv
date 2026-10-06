@@ -100,10 +100,35 @@
     opts = opts || {};
     var old = this.layer;
     this.layer = { rows: rows, pos: null, opts: opts };
+    this.bindPointer(this.layer);
     if (old) { this.paint(old, null); }
     var pos = null;
     if (opts.focus) { pos = CQ.Nav.find(rows, function (it) { return it === opts.focus; }); }
     this.paint(this.layer, pos || CQ.Nav.first(rows));
+  };
+
+  /* Mouse/pointer mode (TV Bro's default cursor): hovering focuses an item, clicking
+   * selects it, exactly like the arrows and OK. */
+  Router.prototype.bindPointer = function (layer) {
+    var self = this;
+    function active() { return (self.modal || self.layer) === layer; }
+    layer.rows.forEach(function (row) {
+      row.forEach(function (item) {
+        if (!item || !item.el || !item.el.addEventListener) { return; }
+        item.el.addEventListener('mouseover', function () {
+          if (!active() || item.disabled) { return; }
+          var pos = CQ.Nav.find(layer.rows, function (it) { return it === item; });
+          if (pos && !CQ.Nav.same(pos, layer.pos)) { self.paint(layer, pos); }
+        });
+        item.el.addEventListener('click', function (e) {
+          if (e && e.preventDefault) { e.preventDefault(); }
+          if (!active() || item.disabled || Date.now() < self.enterLockUntil) { return; }
+          var pos = CQ.Nav.find(layer.rows, function (it) { return it === item; });
+          if (pos) { self.paint(layer, pos); }
+          self.navigate(layer, 'enter');
+        });
+      });
+    });
   };
 
   Router.prototype.focusItem = function (item) {
@@ -192,6 +217,7 @@
     var noItem = { el: no, onSelect: function () { self.answerModal(false); } };
     var yesItem = { el: yes, onSelect: function () { self.answerModal(true); } };
     this.modal = { rows: [[noItem, yesItem]], pos: null, opts: {}, onYes: onYes, onNo: onNo };
+    this.bindPointer(this.modal);
     this.paint(this.modal, { row: 0, col: 0 });
     this.enterLockUntil = Date.now() + ENTER_LOCK_MS;
   };

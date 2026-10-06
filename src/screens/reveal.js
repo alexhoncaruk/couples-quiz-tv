@@ -62,13 +62,16 @@
 
       var last = Game.isLastTurn(game);
       var next = CQ.UI.button(last ? 'See results' : 'Next', 'primary');
-      el.appendChild(h('div', { class: 'btn-row' }, next));
-      ctx.setGrid([[{
+      var quit = CQ.UI.button('Quit game');
+      el.appendChild(h('div', { class: 'btn-row' }, [quit, next]));
+      var quitItem = { el: quit, onSelect: function () { CQ.UI.confirmQuit(ctx); } };
+      var nextItem = {
         el: next,
         onSelect: function () {
           if (Game.next(game)) { ctx.go('interstitial'); } else { ctx.go('results'); }
         }
-      }]]);
+      };
+      ctx.setGrid([[quitItem, nextItem]], { focus: nextItem });
 
       return { back: function () { CQ.UI.confirmQuit(ctx); } };
     }

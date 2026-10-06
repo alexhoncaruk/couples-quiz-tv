@@ -118,24 +118,27 @@
         rows.push(items);
       });
 
-      // Action row: Shift(2) Space(3) Delete(3) Done(2).
+      // Action row: Cancel(2) Shift(2) Space(2) Delete(2) Done(2).
       var actionRow = h('div', { class: 'kb-row' });
       kb.appendChild(actionRow);
-      var shiftItem = keyEl('Aa Shift', 0, 2, 'action');
+      var cancelItem = keyEl('Cancel', 0, 2, 'action');
+      cancelItem.sound = 'back';
+      cancelItem.onSelect = function () { ctx.go('setup', { focusSlot: slot }); };
+      var shiftItem = keyEl('Aa Shift', 2, 2, 'action');
       shiftItem.sound = 'toggle';
       shiftItem.onSelect = function () { shift = !shift; paint(); };
-      var spaceItem = keyEl('Space', 2, 3, 'action');
+      var spaceItem = keyEl('Space', 4, 2, 'action');
       spaceItem.sound = 'type';
       spaceItem.onSelect = function () {
         if (text && !/ $/.test(text) && text.length < MAX_LEN) { text += ' '; paint(); }
       };
-      var delItem = keyEl('Delete', 5, 3, 'action');
+      var delItem = keyEl('Delete', 6, 2, 'action');
       delItem.sound = 'delete';
       delItem.onSelect = function () { text = text.slice(0, -1); paint(); };
       var doneItem = keyEl('Done', 8, 2, 'done');
       doneItem.onSelect = function () { save(text); };
-      [shiftItem, spaceItem, delItem, doneItem].forEach(function (it) { actionRow.appendChild(it.el); });
-      rows.push([shiftItem, spaceItem, delItem, doneItem]);
+      [cancelItem, shiftItem, spaceItem, delItem, doneItem].forEach(function (it) { actionRow.appendChild(it.el); });
+      rows.push([cancelItem, shiftItem, spaceItem, delItem, doneItem]);
 
       paint();
       ctx.setGrid(rows, { focus: text ? doneItem : (picks.length ? rows[0][0] : rows[1][0]) });

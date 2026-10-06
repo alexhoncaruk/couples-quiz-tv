@@ -25,9 +25,11 @@
         return { el: card, onSelect: function () { ctx.go('names', { slot: slot }); } };
       });
 
+      var back = CQ.UI.button('\u2039 Back');
       var swap = CQ.UI.button('Swap order');
       var go = CQ.UI.button('Continue', 'primary');
-      el.appendChild(h('div', { class: 'btn-row' }, [swap, go]));
+      el.appendChild(h('div', { class: 'btn-row' }, [back, swap, go]));
+      var backItem = { el: back, sound: 'back', onSelect: function () { ctx.go('title'); } };
 
       var swapItem = {
         el: swap,
@@ -51,7 +53,7 @@
       var focus = goItem;
       if (params.focus === 'swap') { focus = swapItem; }
       if (params.focusSlot === 0 || params.focusSlot === 1) { focus = cards[params.focusSlot]; }
-      ctx.setGrid([cards, [swapItem, goItem]], { focus: focus });
+      ctx.setGrid([cards, [backItem, swapItem, goItem]], { focus: focus });
 
       return { back: function () { ctx.go('title'); } };
     }

@@ -104,13 +104,17 @@ nothing secret in here, but your custom questions will be public too.
 
 Things to check the first time:
 
-- **The D-pad moves a mouse pointer instead of the yellow focus ring**: the browser is in
-  cursor/mouse mode. Switch it to D-pad/key navigation in the browser's menu or settings
-  (the wording differs between versions). The game needs the arrow keys to reach the page.
-- **Back closes the game or the browser**: keep *Settings → Catch the browser's Back
-  button* **On**. The game then keeps one extra history entry, so the browser's "go back"
-  lands in the game instead of leaving it. In the debug overlay this shows up as
-  `popstate (browser Back) -> back`.
+- **The D-pad moves a mouse pointer instead of the yellow focus ring**: TV Bro starts in
+  cursor (mouse) mode. **Press and hold OK** to open its round cursor menu and move onto
+  the **D-pad** button: the arrows now go straight to the game. The game also works in
+  mouse mode (point at a button and press OK), it's just slower.
+- **Back in TV Bro's D-pad mode** switches TV Bro back to mouse mode and never reaches the
+  game. That's why every screen also has on-screen **Back**, **Cancel** or **Quit game**
+  buttons. In mouse mode, keep *Settings → Catch the browser's Back button* **On** so
+  Back goes back one screen instead of leaving the page.
+- **The picture is cut off at the edges** (common on older TVs with overscan): lower
+  *Settings → Screen size* to 95% or 90%, or set the TV's picture size to "Screen fit" /
+  "Just scan".
 
 ## Sound and music
 
@@ -119,16 +123,18 @@ Things to check the first time:
   a clunk when a know-me answer locks in, a rising jingle for right answers, a "bwomp"
   for wrong ones, a ticking clock in the last 5 seconds and a fanfare for the winner.
 - **Background music** (Medium by default): a funky drums, bass and keys loop that gets
-  quieter while a question is on screen. *Settings → Background music*: Off, Low, Medium
-  or High.
-- Browsers only allow sound after a button press, so the music starts with the first
-  press on the remote. It pauses when you press Home and resumes when you come back.
+  quieter while a question is on screen. *Settings → Music volume*: Low, Medium or High.
+- Android TV browsers usually allow sound straight away. Where a browser blocks sound
+  until you press something, the music starts with the first press on the remote. It pauses when you press Home and resumes when you come back.
 - Everything is generated live with the Web Audio API (`src/sound.js`), so nothing has to
   download, there are no copyright issues, and it works offline.
 
+**Mute buttons:** the title screen and the "pass the remote" screen have **Music** and
+**Sounds** buttons, to mute either one with a press. Both start On.
+
 **Your own music from Spotify instead:** start a playlist in the Spotify app on the
 Chromecast (or from your phone with Spotify Connect), press Home, open TV Bro and the
-game, and set *Settings → Background music* to **Off**. The game's sound effects will play
+game, and press the **Music** button to turn the game's music off. The game's sound effects will play
 on top. Some Android TV versions pause Spotify when another app starts making sound. If
 that happens, turn *Sound effects* off too.
 
@@ -213,7 +219,7 @@ which questions you've already played (per category, on that TV) and serves new 
 ## Project structure
 
 ```
-index.html              the page; loads the scripts below in order
+index.html              the page; loads the scripts below in order (?v=N busts TV caches)
 styles/main.css         10-foot UI on a 1920x1080 stage scaled to the screen
 src/
   nav.js                grid navigation logic (pure, tested)

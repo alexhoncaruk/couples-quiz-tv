@@ -24,13 +24,15 @@
       // Number of questions.
       var roundsRow = h('div', { class: 'rounds-row' }, h('span', { class: 'rounds-label' }, 'Questions:'));
       el.appendChild(roundsRow);
+      var w = PER_ROW / (ROUND_OPTIONS.length + 1);
+      var backPill = h('div', { class: 'pill back-pill focusable' }, '\u2039 Back');
+      roundsRow.insertBefore(backPill, roundsRow.firstChild);
       var pills = ROUND_OPTIONS.map(function (n, i) {
         var pill = h('div', { class: 'pill focusable' }, String(n));
         roundsRow.appendChild(pill);
-        var w = PER_ROW / ROUND_OPTIONS.length;
         return {
           el: pill,
-          x: i * w,
+          x: (i + 1) * w,
           w: w,
           value: n,
           sound: 'toggle',
@@ -39,6 +41,7 @@
       });
       function paintPills() {
         pills.forEach(function (p) {
+          if (!p.value) { return; }
           p.el.className = p.el.className.replace(/(^|\s)selected(?=\s|$)/g, '') + (p.value === app.rounds ? ' selected' : '');
         });
       }
@@ -47,7 +50,7 @@
       // Category cards, PER_ROW per row.
       var cats = h('div', { class: 'cats' });
       el.appendChild(cats);
-      var rows = [pills];
+      var rows = [[{ el: backPill, x: 0, w: w, sound: 'back', onSelect: function () { ctx.go('setup'); } }].concat(pills)];
       var focus = null;
       var rowEl = null;
       app.manifest.categories.forEach(function (cat, i) {
