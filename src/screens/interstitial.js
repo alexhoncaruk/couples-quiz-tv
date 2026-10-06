@@ -38,7 +38,7 @@
       var ready = CQ.UI.button('I\'m ready', 'primary');
       el.appendChild(h('div', { class: 'pass' }, [
         h('div', { class: 'pass-label' }, 'Pass the remote to'),
-        h('div', { class: 'pass-name ' + CQ.UI.playerClass(who) }, names[who]),
+        h('div', { class: 'pass-name ' + CQ.UI.playerClass(who) + CQ.UI.longName(names[who]) }, names[who]),
         h('div', { class: 'pass-line' }, line),
         ready
       ]));

@@ -18,7 +18,7 @@
       var cards = [0, 1].map(function (slot) {
         var card = h('div', { class: 'player-card focusable' }, [
           h('div', { class: 'player-label' }, 'Player ' + (slot + 1)),
-          h('div', { class: 'player-name ' + CQ.UI.playerClass(slot) }, app.players[slot]),
+          h('div', { class: 'player-name ' + CQ.UI.playerClass(slot) + CQ.UI.longName(app.players[slot]) }, app.players[slot]),
           h('div', { class: 'small' }, 'OK to change')
         ]);
         wrap.appendChild(card);

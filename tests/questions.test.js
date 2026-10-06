@@ -90,6 +90,23 @@
     eq(res.seen.length, 4, 'seen list restarts with this game');
   });
 
+  test('questions: one seen list for all categories; running out restarts only that category', function () {
+    var a = [], b = [];
+    for (var i = 0; i < 3; i++) { a.push(copy(good, { id: 'a' + i })); b.push(copy(good, { id: 'b' + i })); }
+    var seen = ['a0', 'a1', 'a2', 'b0'];
+    var res = Q.pick(a, 2, seen, 'trivia', rng(4));
+    eq(res.questions.length, 2);
+    ok(res.seen.indexOf('b0') >= 0, 'other category history is kept');
+    eq(res.seen.length, 3, 'b0 + the 2 just played');
+    var mixed = Q.pick(a.concat(b), 2, ['a0', 'a1', 'a2', 'b0'], 'trivia', rng(9));
+    mixed.questions.forEach(function (q) { ok(q.id === 'b1' || q.id === 'b2', 'a mix also skips questions played in their own category'); });
+  });
+
+  test('questions: manifest accepts mix categories without a file', function () {
+    eq(Q.validateManifest({ categories: [{ id: 'mix', name: 'Mix', mode: 'trivia', mix: 'trivia' }] }), []);
+    ok(Q.validateManifest({ categories: [{ id: 'mix', name: 'Mix', mode: 'trivia', mix: 'quiz' }] }).length);
+  });
+
   test('questions: pick never returns more than the list has', function () {
     eq(Q.pick([good], 10, [], 'trivia', rng(1)).questions.length, 1);
   });

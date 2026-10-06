@@ -48,7 +48,7 @@
       el.appendChild(row);
       s.players.forEach(function (p, i) {
         row.appendChild(h('div', { class: 'final-card' + (i === s.winner ? ' winner' : '') }, [
-          h('div', { class: 'final-name ' + CQ.UI.playerClass(i) }, p.name),
+          h('div', { class: 'final-name ' + CQ.UI.playerClass(i) + CQ.UI.longName(p.name) }, p.name),
           h('div', { class: 'final-score' }, String(p.score)),
           h('div', { class: 'small center' }, knowme ? (p.score === 1 ? 'match' : 'matches') : 'points'),
           stat(knowme ? 'Guessed right' : 'Accuracy', p.correct + ' / ' + p.answered + '  (' + p.accuracy + '%)'),

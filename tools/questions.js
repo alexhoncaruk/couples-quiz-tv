@@ -52,7 +52,7 @@ function serializeManifest(m) {
   var cats = m.categories;
   var lines = ['{', '  "categories": ['];
   cats.forEach(function (c, i) {
-    lines.push('    ' + JSON.stringify(ordered(c, ['id', 'name', 'mode', 'file', 'description'])) + (i < cats.length - 1 ? ',' : ''));
+    lines.push('    ' + JSON.stringify(ordered(c, ['id', 'name', 'mode', 'file', 'mix', 'description'])) + (i < cats.length - 1 ? ',' : ''));
   });
   lines.push('  ]', '}');
   return lines.join('\n') + '\n';
@@ -63,7 +63,7 @@ function loadManifest() {
 }
 
 function findCategory(m, id) {
-  var c = m.categories.filter(function (x) { return x.id === id; })[0];
+  var c = m.categories.filter(function (x) { return x.id === id && !x.mix; })[0];
   if (!c) {
     console.error('No category "' + id + '". Known: ' + m.categories.map(function (x) { return x.id; }).join(', '));
     process.exit(1);
@@ -76,6 +76,7 @@ function validate() {
   var errors = Q.validateManifest(m).map(function (e) { return 'manifest.json: ' + e; });
   var counts = [];
   (m.categories || []).forEach(function (c) {
+    if (c.mix) { counts.push(c.id + ' (mix of every ' + c.mix + ' category)'); return; }
     var file = path.join(DATA, c.file || '');
     if (!c.file || !fs.existsSync(file)) { errors.push(c.id + ': file not found: data/' + c.file); return; }
     var data;
@@ -95,6 +96,7 @@ function validate() {
 function list() {
   var m = loadManifest();
   m.categories.forEach(function (c) {
+    if (c.mix) { console.log(c.id + '\tmix\t-\t' + c.name); return; }
     var data = readJSON(path.join(DATA, c.file));
     console.log(c.id + '\t' + c.mode + '\t' + data.questions.length + '\t' + c.name);
   });
@@ -172,11 +174,12 @@ function newCategory(id, name, mode, description) {
 function format() {
   var m = loadManifest();
   fs.writeFileSync(MANIFEST, serializeManifest(m));
-  m.categories.forEach(function (c) {
+  var files = m.categories.filter(function (c) { return !c.mix; });
+  files.forEach(function (c) {
     var file = path.join(DATA, c.file);
     fs.writeFileSync(file, serializeFile(readJSON(file)));
   });
-  console.log('Formatted manifest and ' + m.categories.length + ' question files.');
+  console.log('Formatted manifest and ' + files.length + ' question files.');
 }
 
 var USAGE = [

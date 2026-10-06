@@ -18,6 +18,21 @@
     router: null,
 
     saveSettings: function () { CQ.Storage.set('settings', App.settings); },
+
+    /* Ids of every question already played, across all categories. Older versions kept
+     * one list per category ("seen.<id>"); those are merged in once. */
+    seenIds: function () {
+      var seen = CQ.Storage.get('seen', []);
+      (App.manifest ? App.manifest.categories : []).forEach(function (c) {
+        var old = CQ.Storage.get('seen.' + c.id, null);
+        if (old) {
+          seen = seen.concat(old);
+          CQ.Storage.remove('seen.' + c.id);
+          CQ.Storage.set('seen', seen);
+        }
+      });
+      return seen;
+    },
     savePlayers: function () { CQ.Storage.set('players', App.players); },
 
     category: function (id) {
@@ -30,10 +45,9 @@
     startGame: function (categoryId) {
       var cat = App.category(categoryId);
       if (!cat) { return Promise.reject(new Error('Unknown category ' + categoryId)); }
-      return CQ.Questions.loadCategory(cat).then(function (list) {
-        var seenKey = 'seen.' + cat.id;
-        var picked = CQ.Questions.pick(list, App.rounds, CQ.Storage.get(seenKey, []), cat.mode);
-        CQ.Storage.set(seenKey, picked.seen);
+      return CQ.Questions.loadCategory(cat, App.manifest).then(function (list) {
+        var picked = CQ.Questions.pick(list, App.rounds, App.seenIds(), cat.mode);
+        CQ.Storage.set('seen', picked.seen);
         var timerOn = cat.mode === 'knowme' ? App.settings.timerKnowMe : App.settings.timerTrivia;
         App.categoryId = cat.id;
         App.game = CQ.Game.create({

@@ -6,7 +6,7 @@
   var h = CQ.UI.h;
   CQ.Screens = CQ.Screens || {};
 
-  var MAX_LEN = 12;
+  var MAX_LEN = 14;
   var COLS = 10;
   var PRESETS = ['Me', 'Babe', 'Honey', 'Sunshine', 'Captain', 'Champ'];
   var LETTER_ROWS = ['ABCDEFGHIJ', 'KLMNOPQRST', 'UVWXYZÑÇ-\'', 'ÁÉÍÓÚÀÈÒÜÖ'];

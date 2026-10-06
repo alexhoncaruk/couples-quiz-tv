@@ -324,7 +324,7 @@ html, body {
 
 .rounds-row {
   text-align: center;
-  margin: 8px 0 28px 0;
+  margin: 4px 0 4px 0;
   white-space: nowrap;
 }
 
@@ -352,45 +352,56 @@ html, body {
   color: #111111;
 }
 
+.cats-view {
+  overflow: hidden;
+  position: relative;
+}
+
 .cats {
   white-space: nowrap;
   text-align: center;
+  padding-top: 12px;
 }
 
 .cat-row {
-  height: 316px;
+  height: 238px;
 }
 
 .cat-card {
   display: inline-block;
   vertical-align: top;
-  width: 520px;
-  height: 290px;
-  margin: 0 18px;
-  padding: 24px 32px;
+  width: 400px;
+  height: 212px;
+  margin: 0 11px;
+  padding: 18px 24px;
   text-align: left;
   white-space: normal;
   overflow: hidden;
 }
 
+.cat-card.knowme { background: #2e2160; border-color: #5a47b0; }
+
 .cat-name {
-  font-size: 46px;
+  font-size: 40px;
   font-weight: 800;
-  line-height: 1.2;
-  margin-bottom: 8px;
+  line-height: 1.15;
+  max-height: 92px;
+  overflow: hidden;
+  margin-bottom: 4px;
 }
 
 .cat-desc {
   font-size: 32px;
   color: #c8cdf0;
-  max-height: 84px;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .badge {
   position: absolute;
-  left: 32px;
-  bottom: 16px;
+  left: 24px;
+  bottom: 14px;
   padding: 2px 18px;
   border-radius: 20px;
   font-size: 32px;
@@ -815,3 +826,8 @@ html, body {
   font-size: 34px;
   padding: 13px 0;
 }
+
+/* Long names (up to 14 letters) get a smaller font where names are shown big. */
+.player-name.long { font-size: 62px; }
+.pass-name.long { font-size: 120px; }
+.final-name.long { font-size: 48px; }

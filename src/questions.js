@@ -8,6 +8,9 @@
  * Know-me prompt:  { id, question, options[4], tags[] } with no correctIndex. Write
  *   {name} where the subject's name goes: "{name}'s perfect Sunday is..."
  *
+ * A manifest entry with "mix": "trivia" (or "knowme") instead of "file" is a mix of
+ * every category of that mode.
+ *
  * The validators are shared with tools/questions.js and the tests (Node module). */
 (function (root) {
   'use strict';
@@ -94,7 +97,11 @@
       var label = c.id || ('category #' + (i + 1));
       if (!isText(c.id)) { errors.push(label + ': missing id'); }
       if (!isText(c.name)) { errors.push(label + ': missing name'); }
-      if (!isText(c.file)) { errors.push(label + ': missing file'); }
+      if (c.mix) {
+        if (!MODES[c.mix]) { errors.push(label + ': mix must be "trivia" or "knowme"'); }
+      } else if (!isText(c.file)) {
+        errors.push(label + ': missing file');
+      }
       if (!MODES[c.mode]) { errors.push(label + ': mode must be "trivia" or "knowme"'); }
       if (c.id && ids[c.id]) { errors.push(label + ': duplicate id'); }
       ids[c.id] = true;
@@ -127,21 +134,27 @@
   }
 
   /* Pick `count` questions, preferring ones not seen in earlier games.
-   * Returns { questions, seen } where `seen` is the updated list of used ids to save.
-   * When everything has been seen, the cycle starts over. */
+   * seenIds is one list for all categories (ids are unique across files), so a question
+   * played in a mix also counts as played in its own category and the other way round.
+   * Returns { questions, seen } where `seen` is the updated list to save. When this list
+   * of questions runs out of unseen ones, only its own ids start over. */
   function pick(list, count, seenIds, mode, rng) {
     rng = rng || Math.random;
+    seenIds = seenIds || [];
     var seenMap = {};
-    for (var i = 0; i < (seenIds || []).length; i++) { seenMap[seenIds[i]] = true; }
+    for (var i = 0; i < seenIds.length; i++) { seenMap[seenIds[i]] = true; }
     var fresh = shuffle(list.filter(function (q) { return !seenMap[q.id]; }), rng);
     var old = shuffle(list.filter(function (q) { return seenMap[q.id]; }), rng);
     var chosen = fresh.slice(0, count);
+    var ids = function (qs) { return qs.map(function (q) { return q.id; }); };
     var seen;
     if (chosen.length < count) {
       chosen = chosen.concat(old.slice(0, count - chosen.length));
-      seen = chosen.map(function (q) { return q.id; });
+      var inList = {};
+      list.forEach(function (q) { inList[q.id] = true; });
+      seen = seenIds.filter(function (id) { return !inList[id]; }).concat(ids(chosen));
     } else {
-      seen = (seenIds || []).concat(chosen.map(function (q) { return q.id; }));
+      seen = seenIds.concat(ids(chosen));
     }
     return {
       questions: chosen.map(function (q) { return prepareQuestion(q, mode, rng); }),
@@ -175,9 +188,19 @@
     });
   }
 
-  /* Loads a category's questions, dropping (and logging) any invalid ones. */
-  function loadCategory(cat) {
+  /* Loads a category's questions, dropping (and logging) any invalid ones.
+   * A mix category loads every file-based category of its mode from the manifest. */
+  function loadCategory(cat, manifest) {
     if (cache[cat.id]) { return Promise.resolve(cache[cat.id]); }
+    if (cat.mix) {
+      var parts = (manifest ? manifest.categories : []).filter(function (c) { return !c.mix && c.mode === cat.mix; });
+      return Promise.all(parts.map(function (c) { return loadCategory(c); })).then(function (lists) {
+        var all = [].concat.apply([], lists);
+        if (!all.length) { throw new Error('No questions to mix'); }
+        cache[cat.id] = all;
+        return all;
+      });
+    }
     return getJSON(DATA_DIR + cat.file).then(function (data) {
       if (!data || !isArray(data.questions)) { throw new Error(cat.file + ' has no "questions" list'); }
       var valid = data.questions.filter(function (q) {

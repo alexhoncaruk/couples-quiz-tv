@@ -42,6 +42,11 @@
     return index === 0 ? 'p1' : 'p2';
   }
 
+  /* ' long' for names that need a smaller font in the big name displays. */
+  function longName(name) {
+    return String(name).length > 9 ? ' long' : '';
+  }
+
   /* Both players with their scores; `active` (0/1) gets a highlight. */
   function scoreboard(game, active) {
     var box = h('div', { class: 'scoreboard' });
@@ -140,6 +145,7 @@
     clear: clear,
     button: button,
     playerClass: playerClass,
+    longName: longName,
     scoreboard: scoreboard,
     renderHints: renderHints,
     toast: toast,

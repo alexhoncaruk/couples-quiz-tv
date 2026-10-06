@@ -7,7 +7,9 @@
   CQ.Screens = CQ.Screens || {};
 
   var ROUND_OPTIONS = [5, 10, 15, 20];
-  var PER_ROW = 3;
+  var PER_ROW = 4;
+  var ROW_H = 238; // must match .cat-row height in main.css
+  var VIEW_H = 612; // visible height of the scrolling card area
 
   CQ.Screens.category = {
     hints: [['← → ↑ ↓', 'Move'], ['OK', 'Play'], ['BACK', 'Players']],
@@ -47,9 +49,19 @@
       }
       paintPills();
 
-      // Category cards, PER_ROW per row.
+      // Category cards, PER_ROW per row, in a window that scrolls to follow the focus.
       var cats = h('div', { class: 'cats' });
-      el.appendChild(cats);
+      var catsView = h('div', { class: 'cats-view', style: 'height:' + VIEW_H + 'px' }, cats);
+      el.appendChild(catsView);
+      var scrollY = 0;
+      function scrollToRow(r) {
+        var top = r * ROW_H;
+        if (top < scrollY) { scrollY = top; }
+        if (top + ROW_H > scrollY + VIEW_H) { scrollY = top + ROW_H - VIEW_H; }
+        var t = 'translateY(' + (-scrollY) + 'px)';
+        cats.style.webkitTransform = t;
+        cats.style.transform = t;
+      }
       var rows = [[{ el: backPill, x: 0, w: w, sound: 'back', onSelect: function () { ctx.go('setup'); } }].concat(pills)];
       var focus = null;
       var rowEl = null;
@@ -59,13 +71,21 @@
           cats.appendChild(rowEl);
           rows.push([]);
         }
-        var card = h('div', { class: 'cat-card focusable' }, [
+        var badge = cat.mix ? 'Mix' : '';
+        badge += (badge ? ' · ' : '') + (cat.mode === 'knowme' ? 'About each other' : 'Trivia');
+        var card = h('div', { class: 'cat-card focusable' + (cat.mode === 'knowme' ? ' knowme' : '') }, [
           h('div', { class: 'cat-name' }, cat.name),
           h('div', { class: 'cat-desc' }, cat.description || ''),
-          h('div', { class: 'badge' }, cat.mode === 'knowme' ? 'About each other' : 'Trivia')
+          h('div', { class: 'badge' }, badge)
         ]);
         rowEl.appendChild(card);
-        var item = { el: card, sound: 'start', onSelect: function () { start(cat); } };
+        var cardRow = rows.length - 2; // 0-based row inside the scrolling area
+        var item = {
+          el: card,
+          sound: 'start',
+          onFocus: function () { scrollToRow(cardRow); },
+          onSelect: function () { start(cat); }
+        };
         rows[rows.length - 1].push(item);
         if (cat.id === app.categoryId || (!focus && i === 0)) { focus = item; }
       });
@@ -88,6 +108,7 @@
       }
 
       ctx.setGrid(rows, { focus: focus });
+      if (!focus || rows[0].indexOf(focus) >= 0) { scrollToRow(0); }
       return { back: function () { ctx.go('setup'); } };
     }
   };
