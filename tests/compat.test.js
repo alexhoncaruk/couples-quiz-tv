@@ -76,7 +76,10 @@
     var html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     var re = /<script src="([^"]+)"/g;
     var m;
-    while ((m = re.exec(html))) { T.ok(fs.existsSync(path.join(ROOT, m[1])), m[1] + ' is missing'); }
+    while ((m = re.exec(html))) {
+      var file = m[1].split('?')[0]; // ?v=N only busts the TV browser's cache
+      T.ok(fs.existsSync(path.join(ROOT, file)), file + ' is missing');
+    }
   });
 
   T.test('compat: index.html loads every src file, with no type="module"', function () {
@@ -84,7 +87,7 @@
     T.ok(html.indexOf('type="module"') < 0, 'no ES modules');
     files(path.join(ROOT, 'src'), '.js').forEach(function (file) {
       var rel = path.relative(ROOT, file).split(path.sep).join('/');
-      T.ok(html.indexOf('src="' + rel + '"') >= 0, rel + ' is not loaded by index.html');
+      T.ok(new RegExp('src="' + rel.replace(/\./g, '\\.') + '(\\?v=\\d+)?"').test(html), rel + ' is not loaded by index.html');
     });
   });
 })();

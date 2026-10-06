@@ -53,7 +53,10 @@
     this.el.appendChild(h('div', { class: 'debug-big' }, big));
     this.el.appendChild(h('div', null, this.lines.join('\n') || '-'));
     this.el.appendChild(h('div', { class: 'small' },
-      'viewport ' + w + 'x' + hgt + '  dpr ' + (root.devicePixelRatio || 1) +
+      'inner ' + w + 'x' + hgt +
+      '  client ' + root.document.documentElement.clientWidth + 'x' + root.document.documentElement.clientHeight +
+      (root.visualViewport ? '  visual ' + Math.round(root.visualViewport.width) + 'x' + Math.round(root.visualViewport.height) : '') +
+      '  dpr ' + (root.devicePixelRatio || 1) +
       '  scale ' + (this.app.scale ? this.app.scale.toFixed(2) : '?') +
       '  screen ' + (this.app.router && this.app.router.name) + '\n' +
       (root.navigator ? root.navigator.userAgent : '')));

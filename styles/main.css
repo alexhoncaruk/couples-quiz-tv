@@ -15,6 +15,18 @@ html, body {
   font-family: Roboto, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
 }
 
+/* The stage is 1920px wide before scaling. Inside this fixed, clipped wrapper it can't
+ * make the page wider, which made TV browsers in "fit page" mode report a 1920px
+ * window and skip the scaling. */
+#viewport {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 #stage {
   position: absolute;
   left: 0;
@@ -175,7 +187,7 @@ html, body {
 
 .title-wrap {
   text-align: center;
-  padding-top: 70px;
+  padding-top: 24px;
 }
 
 .logo {
@@ -198,7 +210,7 @@ html, body {
 
 .menu {
   width: 640px;
-  margin: 56px auto 0 auto;
+  margin: 40px auto 0 auto;
 }
 
 .menu .btn {
@@ -422,7 +434,7 @@ html, body {
 
 .pass {
   text-align: center;
-  padding-top: 90px;
+  padding-top: 40px;
 }
 
 .pass-label {
@@ -635,12 +647,14 @@ html, body {
 
 .setting {
   display: block;
-  height: 68px;
-  line-height: 60px;
-  margin: 0 0 8px 0;
+  height: 60px;
+  line-height: 52px;
+  margin: 0 0 7px 0;
   padding: 0 32px;
-  font-size: 38px;
+  font-size: 34px;
 }
+
+.screen-settings .btn-row { margin-top: 18px; }
 
 .setting-val {
   float: right;
@@ -773,4 +787,31 @@ html, body {
   font-size: 32px;
   white-space: pre-wrap;
   display: none;
+}
+
+/* ---------- Mute buttons and pointer mode ---------- */
+
+.focusable { cursor: pointer; }
+
+.toggles {
+  text-align: center;
+  margin-top: 8px;
+}
+
+.btn.toggle {
+  font-size: 34px;
+  padding: 10px 36px;
+  margin: 0 14px;
+}
+
+.btn.toggle.off {
+  background: #3a1d2c;
+  border-color: #7a3b55;
+  color: #c8a0b4;
+}
+
+.pill.back-pill {
+  width: 170px;
+  font-size: 34px;
+  padding: 13px 0;
 }

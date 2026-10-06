@@ -51,19 +51,37 @@
   };
   App.rounds = App.settings.rounds;
 
-  /* Scale the 1920x1080 stage to whatever size the TV browser reports. */
+  /* The visible area in CSS pixels. Takes the smallest of the browser's numbers:
+   * innerWidth can report the zoomed-out "page" size in TV browsers, while
+   * documentElement.clientWidth and visualViewport give what is actually on screen. */
+  function screenSize() {
+    var de = doc.documentElement;
+    var w = de.clientWidth || root.innerWidth;
+    var h = de.clientHeight || root.innerHeight;
+    if (root.innerWidth && root.innerWidth < w) { w = root.innerWidth; }
+    if (root.innerHeight && root.innerHeight < h) { h = root.innerHeight; }
+    var vv = root.visualViewport;
+    if (vv && vv.width && vv.width < w) { w = vv.width; }
+    if (vv && vv.height && vv.height < h) { h = vv.height; }
+    return { w: w, h: h };
+  }
+
+  /* Scale the 1920x1080 stage to the screen. Settings -> Screen size shrinks it further
+   * for TVs that cut off the edges (overscan). */
   function fit() {
-    var w = root.innerWidth || doc.documentElement.clientWidth;
-    var h = root.innerHeight || doc.documentElement.clientHeight;
-    var s = Math.min(w / 1920, h / 1080);
-    var tx = Math.round((w - 1920 * s) / 2);
-    var ty = Math.round((h - 1080 * s) / 2);
+    var size = screenSize();
+    if (!size.w || !size.h) { return; }
+    var s = Math.min(size.w / 1920, size.h / 1080) * (App.settings.screenFit || 100) / 100;
+    var tx = Math.round((size.w - 1920 * s) / 2);
+    var ty = Math.round((size.h - 1080 * s) / 2);
     var t = 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')';
     var stage = doc.getElementById('stage');
     stage.style.webkitTransform = t;
     stage.style.transform = t;
     App.scale = s;
+    App.screen = size;
   }
+  App.fit = fit;
 
   function fatal(message) {
     var box = doc.getElementById('fatal');
@@ -74,7 +92,15 @@
   function boot() {
     fit();
     root.addEventListener('resize', fit);
-    CQ.Sound.configure({ sfx: App.settings.sound, music: App.settings.music });
+    root.addEventListener('orientationchange', fit);
+    if (root.visualViewport) { root.visualViewport.addEventListener('resize', fit); }
+    // Some TV browsers report their final size only after the first layout.
+    root.setTimeout(fit, 300);
+    root.setTimeout(fit, 1500);
+    CQ.Sound.configure({ sfx: App.settings.sound, musicOn: App.settings.musicOn, music: App.settings.music });
+    CQ.Sound.tryAutostart();
+    // A click (pointer/mouse mode in TV browsers) also counts as the gesture that allows audio.
+    doc.addEventListener('click', function () { CQ.Sound.unlock(); }, true);
 
     var debug = new CQ.DebugOverlay(doc.getElementById('debug'), App);
     var input = new CQ.Input.Controller();
@@ -101,6 +127,16 @@
     });
     input.setTrap(App.settings.historyTrap);
     input.setHandler(function (action, info) { router.handle(action, info); });
+
+    // TV Bro starts in mouse mode; tell people once how to get D-pad mode.
+    var pointerHinted = false;
+    doc.addEventListener('mousemove', function () {
+      if (pointerHinted) { return; }
+      pointerHinted = true;
+      root.setTimeout(function () {
+        CQ.UI.toast('Mouse mode works, but the arrows are easier: in TV Bro hold OK and choose the D-pad button', 7000);
+      }, 400);
+    });
     if (App.settings.debug) { debug.setVisible(true); }
 
     CQ.Questions.loadManifest().then(function (manifest) {

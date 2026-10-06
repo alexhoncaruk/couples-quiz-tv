@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
   <title>Couples Quiz TV</title>
-  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/main.css?v=3">
   <script>
     /* There are no dev tools on a TV, so show any script error on screen. */
     window.onerror = function (msg, src, line) {
@@ -17,6 +17,7 @@
   </script>
 </head>
 <body>
+  <div id="viewport">
   <div id="stage">
     <div id="safe">
       <div id="screen"><div class="loading">Loading…</div></div>
@@ -27,29 +28,30 @@
     <div id="debug"></div>
     <pre id="fatal"></pre>
   </div>
+  </div>
   <noscript>This game needs JavaScript.</noscript>
 
-  <script src="src/nav.js"></script>
-  <script src="src/input.js"></script>
-  <script src="src/storage.js"></script>
-  <script src="src/questions.js"></script>
-  <script src="src/game.js"></script>
-  <script src="src/settings.js"></script>
-  <script src="src/sound.js"></script>
-  <script src="src/ui.js"></script>
-  <script src="src/debug.js"></script>
-  <script src="src/router.js"></script>
-  <script src="src/screens/title.js"></script>
-  <script src="src/screens/settings.js"></script>
-  <script src="src/screens/remote.js"></script>
-  <script src="src/screens/howto.js"></script>
-  <script src="src/screens/setup.js"></script>
-  <script src="src/screens/names.js"></script>
-  <script src="src/screens/category.js"></script>
-  <script src="src/screens/interstitial.js"></script>
-  <script src="src/screens/question.js"></script>
-  <script src="src/screens/reveal.js"></script>
-  <script src="src/screens/results.js"></script>
-  <script src="src/main.js"></script>
+  <script src="src/nav.js?v=3"></script>
+  <script src="src/input.js?v=3"></script>
+  <script src="src/storage.js?v=3"></script>
+  <script src="src/questions.js?v=3"></script>
+  <script src="src/game.js?v=3"></script>
+  <script src="src/settings.js?v=3"></script>
+  <script src="src/sound.js?v=3"></script>
+  <script src="src/ui.js?v=3"></script>
+  <script src="src/debug.js?v=3"></script>
+  <script src="src/router.js?v=3"></script>
+  <script src="src/screens/title.js?v=3"></script>
+  <script src="src/screens/settings.js?v=3"></script>
+  <script src="src/screens/remote.js?v=3"></script>
+  <script src="src/screens/howto.js?v=3"></script>
+  <script src="src/screens/setup.js?v=3"></script>
+  <script src="src/screens/names.js?v=3"></script>
+  <script src="src/screens/category.js?v=3"></script>
+  <script src="src/screens/interstitial.js?v=3"></script>
+  <script src="src/screens/question.js?v=3"></script>
+  <script src="src/screens/reveal.js?v=3"></script>
+  <script src="src/screens/results.js?v=3"></script>
+  <script src="src/main.js?v=3"></script>
 </body>
 </html>
