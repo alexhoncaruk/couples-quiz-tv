@@ -102,6 +102,6 @@ and the game opens on the Chromecast. No TV browser, no typing URLs.
 
 - More categories (music, food, sports, "our relationship" with your own questions).
 - Difficulty filter on the category screen (use the existing `difficulty` field).
-- Warning beeps in the last 5 seconds of the timer (when sound is on).
+- More music loops to pick from (chill, 80s, latin) and a different groove per screen.
 - "Double or nothing" final question with wagers.
 - Spanish UI strings (all text is in the screen files, easy to pull into a `strings.js`).

@@ -9,6 +9,9 @@ back and forth.
   100 points per right answer plus up to 50 for speed, with a 20-second timer.
 - **How well do you know me?**: one of you secretly answers a question about yourself
   (the TV only shows "Answer locked in"), the other guesses. A match is a point. Then swap.
+- **Sound**: clicks, a "pass the remote" chime, jingles for right and wrong answers, a
+  ticking clock, a winner fanfare and a funky background loop. All of it is synthesized
+  live, so there are no audio files. Volume and on/off are in Settings.
 - Plain HTML/CSS/JS, no build step, no frameworks, no npm packages. ES5 code, so it runs
   on old TV browsers.
 - Designed for 1920x1080 at 10 feet: big text, a thick yellow focus ring, 5% safe
@@ -109,6 +112,26 @@ Things to check the first time:
   lands in the game instead of leaving it. In the debug overlay this shows up as
   `popstate (browser Back) -> back`.
 
+## Sound and music
+
+- **Sound effects** (on by default): a soft tick when the focus moves, a click on OK,
+  a lower blip on Back, typing clicks on the keyboard, a ding-dong on "pass the remote",
+  a clunk when a know-me answer locks in, a rising jingle for right answers, a "bwomp"
+  for wrong ones, a ticking clock in the last 5 seconds and a fanfare for the winner.
+- **Background music** (Medium by default): a funky drums, bass and keys loop that gets
+  quieter while a question is on screen. *Settings → Background music*: Off, Low, Medium
+  or High.
+- Browsers only allow sound after a button press, so the music starts with the first
+  press on the remote. It pauses when you press Home and resumes when you come back.
+- Everything is generated live with the Web Audio API (`src/sound.js`), so nothing has to
+  download, there are no copyright issues, and it works offline.
+
+**Your own music from Spotify instead:** start a playlist in the Spotify app on the
+Chromecast (or from your phone with Spotify Connect), press Home, open TV Bro and the
+game, and set *Settings → Background music* to **Off**. The game's sound effects will play
+on top. Some Android TV versions pause Spotify when another app starts making sound. If
+that happens, turn *Sound effects* off too.
+
 ## Check what keys your remote sends
 
 You need this when a button does nothing or does the wrong thing.
@@ -199,7 +222,8 @@ src/
   game.js               turns, scoring, know-me flow, stats (pure, tested)
   questions.js          manifest/question loading, validation, shuffling, unseen-first picking
   storage.js            localStorage wrapper with in-memory fallback
-  sound.js              optional WebAudio beeps (off by default)
+  settings.js           settings defaults and upgrades from older saved settings
+  sound.js              synthesized sound effects and background music (Web Audio API)
   ui.js                 DOM helpers, hint bar, scoreboard, toasts
   debug.js              key debug overlay
   main.js               startup and shared state
@@ -235,5 +259,7 @@ Change category or Home.
   variables.
 - Scripts are plain `<script>` tags sharing one `window.CQ` namespace, and data loads
   with `XMLHttpRequest`.
+- Audio uses the Web Audio API with no files. Where it's missing, the game is silent and
+  keeps working.
 - Animations are minimal (a blinking cursor and the timer bar) to keep slow TV chips
   smooth.
