@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Couples Quiz TV - tests</title>
+  <style>
+    body { margin: 5% 5%; background: #0b0f2a; color: #fff; font: 28px/1.4 Roboto, Arial, sans-serif; }
+    h1 { font-size: 48px; margin: 0 0 16px 0; }
+    .ok { color: #5df08f; }
+    .fail { color: #ff7b6b; }
+    #summary { font-size: 40px; font-weight: bold; margin-bottom: 16px; }
+    #list { white-space: pre-wrap; font-size: 24px; }
+  </style>
+</head>
+<body>
+  <h1>Unit tests in this browser</h1>
+  <div id="summary">Running…</div>
+  <div id="list"></div>
+  <!-- Same tests as `node tests/run.js` (minus the Node-only file checks).
+       Open this page on the TV to check the code runs on its browser. -->
+  <script src="../src/nav.js"></script>
+  <script src="../src/input.js"></script>
+  <script src="../src/game.js"></script>
+  <script src="../src/questions.js"></script>
+  <script src="../src/router.js"></script>
+  <script src="harness.js"></script>
+  <script src="nav.test.js"></script>
+  <script src="input.test.js"></script>
+  <script src="game.test.js"></script>
+  <script src="questions.test.js"></script>
+  <script src="router.test.js"></script>
+  <script>
+    (function () {
+      var list = document.getElementById('list');
+      var res = T.run(function (passed, name, err) {
+        var line = document.createElement('div');
+        line.className = passed ? 'ok' : 'fail';
+        line.appendChild(document.createTextNode((passed ? 'ok   ' : 'FAIL ') + name + (err ? '  - ' + err.message : '')));
+        list.appendChild(line);
+      });
+      var s = document.getElementById('summary');
+      s.className = res.failed ? 'fail' : 'ok';
+      s.textContent = res.passed + ' passed, ' + res.failed + ' failed';
+    })();
+  </script>
+</body>
+</html>

@@ -72,6 +72,13 @@
     });
   });
 
+  T.test('compat: every script index.html loads exists', function () {
+    var html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+    var re = /<script src="([^"]+)"/g;
+    var m;
+    while ((m = re.exec(html))) { T.ok(fs.existsSync(path.join(ROOT, m[1])), m[1] + ' is missing'); }
+  });
+
   T.test('compat: index.html loads every src file, with no type="module"', function () {
     var html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
     T.ok(html.indexOf('type="module"') < 0, 'no ES modules');
