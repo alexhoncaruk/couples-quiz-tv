@@ -41,6 +41,7 @@
         ready
       ]));
 
+      CQ.Sound.play('pass');
       ctx.setGrid([[{ el: ready, onSelect: function () { ctx.go('question'); } }]]);
       return { back: function () { CQ.UI.confirmQuit(ctx); } };
     }

@@ -73,7 +73,7 @@
       }
 
       function type(ch) {
-        if (text.length >= MAX_LEN) { ctx.toast('Names can be up to ' + MAX_LEN + ' letters'); return; }
+        if (text.length >= MAX_LEN) { CQ.Sound.play('error'); ctx.toast('Names can be up to ' + MAX_LEN + ' letters'); return; }
         text += upper() ? ch : ch.toLowerCase();
         shift = false;
         paint();
@@ -81,7 +81,7 @@
 
       function save(name) {
         name = trim(name);
-        if (!name) { ctx.toast('Type a name or pick one from the top row'); return; }
+        if (!name) { CQ.Sound.play('error'); ctx.toast('Type a name or pick one from the top row'); return; }
         app.players[slot] = name;
         app.savePlayers();
         var list = [name].concat(recent.filter(function (n) { return n.toLowerCase() !== name.toLowerCase(); }));
@@ -109,6 +109,7 @@
         for (var i = 0; i < letters.length; i++) {
           var it = keyEl(letters.charAt(i), i, 1);
           it.ch = letters.charAt(i);
+          it.sound = 'type';
           it.onSelect = (function (ch) { return function () { type(ch); }; })(it.ch);
           rowEl.appendChild(it.el);
           letterItems.push(it);
@@ -121,12 +122,15 @@
       var actionRow = h('div', { class: 'kb-row' });
       kb.appendChild(actionRow);
       var shiftItem = keyEl('Aa Shift', 0, 2, 'action');
+      shiftItem.sound = 'toggle';
       shiftItem.onSelect = function () { shift = !shift; paint(); };
       var spaceItem = keyEl('Space', 2, 3, 'action');
+      spaceItem.sound = 'type';
       spaceItem.onSelect = function () {
         if (text && !/ $/.test(text) && text.length < MAX_LEN) { text += ' '; paint(); }
       };
       var delItem = keyEl('Delete', 5, 3, 'action');
+      delItem.sound = 'delete';
       delItem.onSelect = function () { text = text.slice(0, -1); paint(); };
       var doneItem = keyEl('Done', 8, 2, 'done');
       doneItem.onSelect = function () { save(text); };

@@ -4,29 +4,11 @@
   var CQ = root.CQ;
   var doc = root.document;
 
-  var DEFAULT_SETTINGS = {
-    sound: false,
-    timerTrivia: true,
-    timerKnowMe: false,
-    timerSeconds: 20,
-    rounds: 10,
-    debug: false,
-    historyTrap: true
-  };
-
-  function withDefaults(saved) {
-    var s = {};
-    for (var k in DEFAULT_SETTINGS) {
-      s[k] = saved && saved.hasOwnProperty(k) ? saved[k] : DEFAULT_SETTINGS[k];
-    }
-    return s;
-  }
-
   var savedPlayers = CQ.Storage.get('players', null);
 
   /* Everything the screens share. */
   var App = {
-    settings: withDefaults(CQ.Storage.get('settings', null)),
+    settings: CQ.Settings.migrate(CQ.Storage.get('settings', null)),
     players: savedPlayers && savedPlayers.length === 2 ? savedPlayers : ['Player 1', 'Player 2'],
     rounds: null,
     manifest: null,
@@ -92,7 +74,7 @@
   function boot() {
     fit();
     root.addEventListener('resize', fit);
-    CQ.Sound.enabled = !!App.settings.sound;
+    CQ.Sound.configure({ sfx: App.settings.sound, music: App.settings.music });
 
     var debug = new CQ.DebugOverlay(doc.getElementById('debug'), App);
     var input = new CQ.Input.Controller();
@@ -112,7 +94,11 @@
     router.onDebug = function () { debug.toggle(); };
 
     input.attach(root, doc);
-    input.onRaw(function (info) { debug.record(info); });
+    input.onRaw(function (info) {
+      debug.record(info);
+      // Any key press counts as the user gesture browsers need before playing audio.
+      if (info.type === 'keydown') { CQ.Sound.unlock(); }
+    });
     input.setTrap(App.settings.historyTrap);
     input.setHandler(function (action, info) { router.handle(action, info); });
     if (App.settings.debug) { debug.setVisible(true); }
@@ -126,6 +112,5 @@
   }
 
   CQ.App = App;
-  CQ.DEFAULT_SETTINGS = DEFAULT_SETTINGS;
   boot();
 })(this);

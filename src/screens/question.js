@@ -62,7 +62,7 @@
           h('span', { class: 'option-text' }, opt)
         ]);
         body.appendChild(o);
-        return { el: o, onSelect: function () { choose(i); } };
+        return { el: o, sound: null, onSelect: function () { choose(i); } };
       });
       ctx.setGrid([[items[0], items[1]], [items[2], items[3]]]);
 
@@ -70,6 +70,8 @@
       var watch = new Game.Stopwatch();
       var interval = null;
       var paused = false;
+      var lastTick = null;
+      CQ.Sound.duck(true);
 
       function tick() {
         if (paused || answered) { return; }
@@ -79,6 +81,11 @@
         fill.style.webkitTransform = tr;
         fill.style.transform = tr;
         if (left < 5000 && fill.className.indexOf('low') < 0) { fill.className += ' low'; }
+        var secondsLeft = Math.ceil(left / 1000);
+        if (left > 0 && left < 5000 && secondsLeft !== lastTick) {
+          lastTick = secondsLeft;
+          CQ.Sound.play('tick');
+        }
         if (left <= 0) { choose(-1); }
       }
 
@@ -98,11 +105,12 @@
         var elapsed = watch.elapsed();
         if (phase === 'secret') {
           Game.lockSecret(game, i);
+          CQ.Sound.play('lock');
           showLocked();
           return;
         }
         var result = phase === 'guess' ? Game.guess(game, i, elapsed) : Game.answer(game, i, elapsed);
-        if (result.correct || result.match) { CQ.Sound.correct(); } else { CQ.Sound.wrong(); }
+        CQ.Sound.play(result.correct || result.match ? 'correct' : 'wrong');
         ctx.go('reveal');
       }
 
@@ -124,7 +132,10 @@
         back: function () { CQ.UI.confirmQuit(ctx); },
         pause: function () { paused = true; watch.pause(); },
         resume: function () { paused = false; watch.resume(); },
-        unmount: stopTimer
+        unmount: function () {
+          stopTimer();
+          CQ.Sound.duck(false);
+        }
       };
     }
   };

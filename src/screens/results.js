@@ -36,7 +36,7 @@
       var s = CQ.Game.summary(game);
       var knowme = s.mode === 'knowme';
       saveRecord(game, s);
-      if (s.winner >= 0) { CQ.Sound.correct(); }
+      CQ.Sound.play(s.winner >= 0 ? 'win' : 'tie');
 
       var headline = s.winner < 0
         ? h('span', null, 'It\'s a tie!')

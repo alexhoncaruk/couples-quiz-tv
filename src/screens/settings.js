@@ -8,7 +8,8 @@
   function onOff(v) { return v ? 'On' : 'Off'; }
 
   var OPTIONS = [
-    { key: 'sound', label: 'Sound effects', values: [false, true], fmt: onOff },
+    { key: 'sound', label: 'Sound effects', values: [true, false], fmt: onOff },
+    { key: 'music', label: 'Background music', values: ['off', 'low', 'medium', 'high'], fmt: function (v) { return v.charAt(0).toUpperCase() + v.slice(1); } },
     { key: 'timerTrivia', label: 'Timer in trivia', values: [true, false], fmt: onOff },
     { key: 'timerKnowMe', label: 'Timer in "How well do you know me?"', values: [false, true], fmt: onOff },
     { key: 'timerSeconds', label: 'Timer length', values: [10, 15, 20, 30], fmt: function (v) { return v + ' seconds'; } },
@@ -18,10 +19,8 @@
   ];
 
   function apply(app, key, value) {
-    if (key === 'sound') {
-      CQ.Sound.enabled = value;
-      CQ.Sound.correct();
-    }
+    if (key === 'sound') { CQ.Sound.setSfx(value); }
+    if (key === 'music') { CQ.Sound.setMusic(value); }
     if (key === 'rounds') { app.rounds = value; }
     if (key === 'debug') { CQ.debug.setVisible(value); }
     if (key === 'historyTrap') { CQ.input.setTrap(value); }
@@ -50,8 +49,10 @@
             app.settings[opt.key] = v;
             app.saveSettings();
             apply(app, opt.key, v);
+            CQ.Sound.play('toggle');
             item.paint();
           },
+          sound: null, // change() plays its own sound
           onSelect: function () { item.change(1); }
         };
         item.paint();

@@ -33,6 +33,7 @@
           x: i * w,
           w: w,
           value: n,
+          sound: 'toggle',
           onSelect: function () { app.rounds = n; paintPills(); }
         };
       });
@@ -61,7 +62,7 @@
           h('div', { class: 'badge' }, cat.mode === 'knowme' ? 'About each other' : 'Trivia')
         ]);
         rowEl.appendChild(card);
-        var item = { el: card, onSelect: function () { start(cat); } };
+        var item = { el: card, sound: 'start', onSelect: function () { start(cat); } };
         rows[rows.length - 1].push(item);
         if (cat.id === app.categoryId || (!focus && i === 0)) { focus = item; }
       });

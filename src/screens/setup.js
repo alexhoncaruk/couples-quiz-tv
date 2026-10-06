@@ -42,8 +42,8 @@
         onSelect: function () {
           var a = app.players[0].replace(/^\s+|\s+$/g, '');
           var b = app.players[1].replace(/^\s+|\s+$/g, '');
-          if (!a || !b) { ctx.toast('Both players need a name'); return; }
-          if (a.toLowerCase() === b.toLowerCase()) { ctx.toast('Pick two different names'); return; }
+          if (!a || !b) { CQ.Sound.play('error'); ctx.toast('Both players need a name'); return; }
+          if (a.toLowerCase() === b.toLowerCase()) { CQ.Sound.play('error'); ctx.toast('Pick two different names'); return; }
           ctx.go('category');
         }
       };

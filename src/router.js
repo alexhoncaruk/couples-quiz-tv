@@ -135,13 +135,19 @@
     if (action === 'enter' && Date.now() < this.enterLockUntil) { return; }
 
     if (this.modal) {
-      if (action === 'back') { this.answerModal(false); } else { this.navigate(this.modal, action); }
+      if (action === 'back') {
+        CQ.Sound.play('back');
+        this.answerModal(false);
+      } else {
+        this.navigate(this.modal, action);
+      }
       return;
     }
     var inst = this.instance || {};
     if (inst.key && inst.key(action) === true) { return; }
     if (action === 'back') {
       if (inst.back) { inst.back(); }
+      if (!this.modal) { CQ.Sound.play('back'); }
       return;
     }
     if (this.layer) { this.navigate(this.layer, action); }
@@ -150,11 +156,22 @@
   Router.prototype.navigate = function (layer, action) {
     if (action === 'enter') {
       var item = this.currentItem(layer);
-      if (item && item.onSelect) { item.onSelect(item); }
+      if (item && item.onSelect) {
+        // Items can pick their own sound (e.g. 'type' on the keyboard) or none (null),
+        // when the action plays something better, like correct/wrong.
+        var sound = item.hasOwnProperty('sound') ? item.sound : 'select';
+        if (sound) { CQ.Sound.play(sound); }
+        item.onSelect(item);
+      }
       return;
     }
     var next = CQ.Nav.move(layer.rows, layer.pos, action, layer.opts);
-    if (next && !CQ.Nav.same(next, layer.pos)) { this.paint(layer, next); } else if (next) { layer.pos = next; }
+    if (next && !CQ.Nav.same(next, layer.pos)) {
+      CQ.Sound.play('move');
+      this.paint(layer, next);
+    } else if (next) {
+      layer.pos = next;
+    }
   };
 
   /* A two-button dialog. Back or the "no" button closes it. */
@@ -162,6 +179,7 @@
     var h = CQ.UI.h;
     var self = this;
     if (this.instance && this.instance.pause) { this.instance.pause(); }
+    CQ.Sound.play('open');
     var no = CQ.UI.button(opts.no || 'Cancel');
     var yes = CQ.UI.button(opts.yes || 'OK', 'danger');
     var box = h('div', { class: 'backdrop' }, h('div', { class: 'modal-box' }, [
