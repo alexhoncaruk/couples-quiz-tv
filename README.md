@@ -5,23 +5,30 @@ A 2-player quiz game for couples, played on a TV with nothing but a D-pad remote
 It's one static web page: open it in a TV browser and play hot-seat, passing one remote
 back and forth.
 
-- **1,668 questions in 31 categories**, so casual play doesn't repeat for weeks:
-  - 21 trivia categories with 60 to 91 questions each: Mixed, Movies & TV, Music,
+- **2,288 questions in 42 categories**, so casual play doesn't repeat for weeks:
+  - 30 trivia categories with 60 to 91 questions each: Mixed, Movies & TV, Music,
     Geography, Travel & landmarks, Spain, History, Science & nature, Space, Animals,
     Human body, Food & drink, Sports, Words & languages, Art & books, Tech & internet,
-    Brands, Cartoons & Disney, Games, Holidays & traditions, Myths & legends.
-  - 7 "about you" sets: How well do you know me? (50), Love & us, Food & taste, Dreams &
-    future, Childhood & memories, Would you rather… and Habits & quirks (40 each).
+    Brands, Cartoons & Disney, Games, Holidays & traditions, Myths & legends,
+    Love & romance, Famous people, Inventions, Cars & transport, Planet Earth, Football,
+    TV series, Superheroes & comics, Riddles & brain teasers.
+  - 9 "about you" sets: How well do you know me? (50), Love & us, Food & taste, Dreams &
+    future, Childhood & memories, Would you rather…, Habits & quirks, Travel & adventures
+    and Work & money (40 each).
   - **Everything mix** and **Know-me mix** combine all of them, plus your own **Custom**
     category.
 - **Trivia scoring**: 100 points per right answer plus up to 50 for speed, with a
   20-second timer.
+- **A fun fact after every answer**: the reveal screen shows a "Did you know?" box with
+  something extra about the right answer (answer "Pyramids of Giza", learn something about
+  the pyramids). Know-me rounds get a "Talk about it" prompt instead.
+- **The winner gets a party**: confetti, party horns and applause on the results screen.
 - **How well do you know me?**: one of you secretly answers 5 questions about yourself
   (each answer disappears as soon as it's locked in), then the other guesses all 5 one by
   one. A match is a point. Then you swap.
 - **Sound**: clicks, a "pass the remote" chime, jingles for right and wrong answers, a
-  ticking clock, a winner fanfare and a funky background loop. All of it is synthesized
-  live, so there are no audio files. Volume and on/off are in Settings.
+  ticking clock, a winner fanfare with applause and a funky background loop. All of it is
+  synthesized in the browser, so there are no audio files. Volume and on/off are in Settings.
 - Plain HTML/CSS/JS, no build step, no frameworks, no npm packages. ES5 code, so it runs
   on old TV browsers.
 - Designed for 1920x1080 at 10 feet: big text, a thick yellow focus ring, 5% safe
@@ -131,13 +138,19 @@ Things to check the first time:
 - **Sound effects** (on by default): a soft tick when the focus moves, a click on OK,
   a lower blip on Back, typing clicks on the keyboard, a ding-dong on "pass the remote",
   a clunk when a know-me answer locks in, a rising jingle for right answers, a "bwomp"
-  for wrong ones, a ticking clock in the last 5 seconds and a fanfare for the winner.
+  for wrong ones, a ticking clock in the last 5 seconds, and a fanfare with party horns and
+  applause for the winner.
 - **Background music** (Medium by default): a funky drums, bass and keys loop that gets
   quieter while a question is on screen. *Settings → Music volume*: Low, Medium or High.
 - Android TV browsers usually allow sound straight away. Where a browser blocks sound
   until you press something, the music starts with the first press on the remote. It pauses when you press Home and resumes when you come back.
-- Everything is generated live with the Web Audio API (`src/sound.js`), so nothing has to
+- Everything is generated with the Web Audio API (`src/sound.js`), so nothing has to
   download, there are no copyright issues, and it works offline.
+- The music loop is rendered once when the page loads (about 8 seconds of audio) and then
+  played as a seamless loop by the audio hardware. Earlier versions scheduled every note
+  on a timer, so a busy TV could make the music stutter, slow down or stop until a
+  refresh. Now a slow moment on the TV can't affect it. If the browser pauses audio
+  (e.g. after Home), the game resumes it within a few seconds.
 
 **Mute buttons:** the title screen and the "pass the remote" screen have **Music** and
 **Sounds** buttons, to mute either one with a press. Both start On.
@@ -181,8 +194,10 @@ Questions live in `data/questions/`, one JSON file per category, one question pe
   Options are shuffled in the game, so the right one can sit anywhere in the file. Add
   `"keepOrder": true` to keep the order (e.g. years or numbers).
 - `difficulty`: 1 easy, 2 medium, 3 hard. `tags`: any words, for your own sorting.
+- `fact` (optional, up to 240 characters): the "Did you know?" text shown after the
+  answer. Every built-in trivia question has one; the tests check that.
 - Know-me prompts (`know-me.json`) have no `correctIndex`. Write `{name}` where the
-  person's name goes:
+  person's name goes, and `{partner}` for the other player's name:
   `{"id":"know-me-026","question":"{name}'s dream car is…","options":["A","B","C","D"],"tags":["fun"]}`
 
 **The easy way: the question tool** (plain Node, no installs):

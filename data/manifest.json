@@ -9,6 +9,8 @@
     {"id":"know-me-past","name":"Childhood & memories","mode":"knowme","file":"questions/know-me-past.json","description":"Back in the day"},
     {"id":"know-me-would","name":"Would you rather…","mode":"knowme","file":"questions/know-me-would.json","description":"Tough choices"},
     {"id":"know-me-habits","name":"Habits & quirks","mode":"knowme","file":"questions/know-me-habits.json","description":"Everyday quirks"},
+    {"id":"know-me-travel","name":"Travel & adventures","mode":"knowme","file":"questions/know-me-travel.json","description":"Trips and journeys"},
+    {"id":"know-me-work","name":"Work & money","mode":"knowme","file":"questions/know-me-work.json","description":"Jobs and wallets"},
     {"id":"mixed","name":"Mixed trivia","mode":"trivia","file":"questions/mixed.json","description":"A bit of everything"},
     {"id":"movies-tv","name":"Movies & TV","mode":"trivia","file":"questions/movies-tv.json","description":"Films and series"},
     {"id":"music","name":"Music","mode":"trivia","file":"questions/music.json","description":"Hits and classics"},
@@ -30,6 +32,15 @@
     {"id":"games","name":"Games","mode":"trivia","file":"questions/games.json","description":"Video and board"},
     {"id":"traditions","name":"Holidays & traditions","mode":"trivia","file":"questions/traditions.json","description":"Festivals worldwide"},
     {"id":"mythology","name":"Myths & legends","mode":"trivia","file":"questions/mythology.json","description":"Gods and monsters"},
+    {"id":"love","name":"Love & romance","mode":"trivia","file":"questions/love.json","description":"Couples and kisses"},
+    {"id":"people","name":"Famous people","mode":"trivia","file":"questions/people.json","description":"Who is who"},
+    {"id":"inventions","name":"Inventions","mode":"trivia","file":"questions/inventions.json","description":"Who made what"},
+    {"id":"transport","name":"Cars & transport","mode":"trivia","file":"questions/transport.json","description":"Wheels and wings"},
+    {"id":"nature","name":"Planet Earth","mode":"trivia","file":"questions/nature.json","description":"Oceans to volcanoes"},
+    {"id":"football","name":"Football","mode":"trivia","file":"questions/football.json","description":"Goals and legends"},
+    {"id":"series","name":"TV series","mode":"trivia","file":"questions/series.json","description":"Binge-worthy shows"},
+    {"id":"heroes","name":"Superheroes & comics","mode":"trivia","file":"questions/heroes.json","description":"Capes and comics"},
+    {"id":"riddles","name":"Riddles & brain teasers","mode":"trivia","file":"questions/riddles.json","description":"Think twice!"},
     {"id":"custom","name":"Custom","mode":"trivia","file":"questions/custom.json","description":"Your own questions"}
   ]
 }
