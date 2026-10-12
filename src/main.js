@@ -112,6 +112,7 @@
     root.setTimeout(fit, 300);
     root.setTimeout(fit, 1500);
     CQ.Sound.configure({ sfx: App.settings.sound, musicOn: App.settings.musicOn, music: App.settings.music });
+    CQ.Sound.prepare();
     CQ.Sound.tryAutostart();
     // A click (pointer/mouse mode in TV browsers) also counts as the gesture that allows audio.
     doc.addEventListener('click', function () { CQ.Sound.unlock(); }, true);

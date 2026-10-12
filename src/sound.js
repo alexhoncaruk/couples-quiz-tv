@@ -13,7 +13,8 @@
   var BPM = 104;
   var STEP = 60 / BPM / 4; // one 16th note, in seconds
   var SWING = 0.12; // odd 16ths come a little late, for groove
-  var LOOKAHEAD = 0.15; // seconds of music scheduled ahead
+  var LOOKAHEAD = 0.3; // seconds of music scheduled ahead (live fallback only)
+  var LOOP_RATE = 24000; // sample rate of the pre-rendered music loop
 
   var ctx = null;
   var master = null;
@@ -21,7 +22,10 @@
   var musicBus = null;
   var noiseBuf = null;
   var state = { sfx: true, music: 'medium', musicOn: true, ducked: false, unlocked: false };
-  var music = { playing: false, step: 0, bar: 0, next: 0, timer: null };
+  // The music loop is rendered once into an AudioBuffer and played on repeat. That needs
+  // no timers while playing, so a busy TV can't make it stutter, slow down or stop.
+  // Browsers without OfflineAudioContext fall back to scheduling notes live.
+  var music = { playing: false, step: 0, bar: 0, next: 0, timer: null, source: null, buffer: null, rendering: false };
   var lastPlayed = {};
 
   /* ---------- Audio graph ---------- */
@@ -246,14 +250,96 @@
     if (PATTERNS.stab[step]) { stab(t, chord.stab); }
   }
 
+  /* Live fallback: schedule the next notes a little ahead. If the timer was held up
+   * (a busy TV), skip the missed notes instead of firing them all at once. */
   function schedule() {
     if (!ctx) { return; }
+    if (music.next < ctx.currentTime - 0.05) { music.next = ctx.currentTime + 0.05; }
     while (music.next < ctx.currentTime + LOOKAHEAD) {
       playStep(music.step, music.bar, music.next);
       music.next += STEP;
       music.step++;
       if (music.step === 16) { music.step = 0; music.bar++; }
     }
+  }
+
+  /* Render the 8-bar loop into a buffer, offline and off the main thread. Half a second
+   * of extra tail is rendered and added back onto the start, so notes ringing over the
+   * loop point are kept and the loop joins seamlessly. Needs no live AudioContext, so it
+   * can start as soon as the page loads. Calls done(buffer) or done(null). */
+  var TAIL = 0.5;
+  function renderLoop(done) {
+    var OAC = root.OfflineAudioContext || root.webkitOfflineAudioContext;
+    if (!OAC) { done(null); return; }
+    var loopSteps = PROGRESSION.length * 16;
+    var loopFrames = Math.round(loopSteps * STEP * LOOP_RATE);
+    var tailFrames = Math.round(TAIL * LOOP_RATE);
+    var oc;
+    try { oc = new OAC(1, loopFrames + tailFrames, LOOP_RATE); } catch (e) { done(null); return; }
+
+    // Point the note functions at the offline context for a moment (synchronously).
+    var saved = { ctx: ctx, musicBus: musicBus, noiseBuf: noiseBuf };
+    try {
+      ctx = oc;
+      musicBus = oc.createGain();
+      musicBus.connect(oc.destination);
+      noiseBuf = oc.createBuffer(1, LOOP_RATE, LOOP_RATE);
+      var nd = noiseBuf.getChannelData(0);
+      for (var i = 0; i < nd.length; i++) { nd[i] = Math.random() * 2 - 1; }
+      for (var s = 0; s < loopSteps; s++) { playStep(s % 16, Math.floor(s / 16), s * STEP); }
+    } catch (e2) {
+      oc = null;
+    }
+    ctx = saved.ctx;
+    musicBus = saved.musicBus;
+    noiseBuf = saved.noiseBuf;
+    if (!oc) { done(null); return; }
+
+    var finished = false;
+    function finish(rendered) {
+      if (finished) { return; }
+      finished = true;
+      try {
+        var out = oc.createBuffer(1, loopFrames, LOOP_RATE);
+        var src = rendered.getChannelData(0);
+        var dst = out.getChannelData(0);
+        for (var j = 0; j < loopFrames; j++) { dst[j] = src[j] + (j < tailFrames ? src[loopFrames + j] : 0); }
+        done(out);
+      } catch (e3) { done(null); }
+    }
+    function fail() {
+      if (!finished) { finished = true; done(null); }
+    }
+    oc.oncomplete = function (ev) { finish(ev.renderedBuffer); };
+    try {
+      var p = oc.startRendering();
+      if (p && p.then) { p.then(finish, fail); }
+    } catch (e4) { fail(); }
+  }
+
+  /* Start rendering the loop early (page load); music plays from it once ready. */
+  function prepareLoop() {
+    if (music.buffer || music.rendering || music.failed) { return; }
+    music.rendering = true;
+    renderLoop(function (buffer) {
+      music.rendering = false;
+      music.buffer = buffer;
+      if (!buffer) { music.failed = true; return; }
+      // If the live fallback was filling in while rendering, switch over now.
+      if (music.playing && !music.source && ctx) {
+        if (music.timer) { root.clearInterval(music.timer); music.timer = null; }
+        playLoop();
+      }
+    });
+  }
+
+  function playLoop() {
+    var src = ctx.createBufferSource();
+    src.buffer = music.buffer;
+    src.loop = true;
+    src.connect(musicBus);
+    src.start(0);
+    music.source = src;
   }
 
   function musicWanted() {
@@ -269,21 +355,44 @@
     musicBus.gain.setTargetAtTime(musicGain(), ctx.currentTime, 0.25);
   }
 
-  function startMusic() {
-    if (music.playing || !ctx || !musicWanted()) { return; }
-    music.playing = true;
+  function startLive() {
     music.step = 0;
     music.bar = 0;
     music.next = ctx.currentTime + 0.1;
-    music.timer = root.setInterval(schedule, 30);
+    music.timer = root.setInterval(schedule, 50);
+  }
+
+  function startMusic() {
+    if (music.playing || !ctx || !musicWanted()) { return; }
+    music.playing = true;
     fadeMusic();
+    if (music.buffer) { playLoop(); return; }
+    // Not rendered yet (or can't be): play live notes meanwhile.
+    startLive();
+    prepareLoop();
   }
 
   function stopMusic() {
     if (music.timer) { root.clearInterval(music.timer); }
     music.timer = null;
+    if (music.source) {
+      try { music.source.stop(0); } catch (e) { /* already stopped */ }
+      music.source.disconnect();
+      music.source = null;
+    }
     music.playing = false;
     if (ctx) { musicBus.gain.setTargetAtTime(0, ctx.currentTime, 0.1); }
+  }
+
+  /* Some TVs pause web audio on their own (another app grabbing sound, a screensaver).
+   * Every few seconds, wake it up again if the game is on screen. */
+  var watchdog = null;
+  function startWatchdog() {
+    if (watchdog || !root.setInterval) { return; }
+    watchdog = root.setInterval(function () {
+      var hidden = root.document && root.document.hidden;
+      if (ctx && state.unlocked && !hidden && ctx.state === 'suspended' && ctx.resume) { ctx.resume(); }
+    }, 4000);
   }
 
   /* ---------- Public API ---------- */
@@ -308,6 +417,7 @@
       var ac = audio();
       if (ac && ac.state === 'running') {
         state.unlocked = true;
+        startWatchdog();
         startMusic();
       }
     },
@@ -318,6 +428,7 @@
       if (!ac) { return; }
       if (ac.state === 'suspended' && ac.resume) { ac.resume(); }
       state.unlocked = true;
+      startWatchdog();
       startMusic();
     },
 
@@ -360,7 +471,17 @@
       if (ctx && state.unlocked && ctx.resume) { ctx.resume(); }
     },
 
+    /* Render the music loop in the background; call once at startup. */
+    prepare: function () { prepareLoop(); },
+
     isMusicPlaying: function () { return music.playing; },
+    /* 'loop' (pre-rendered), 'live' (fallback), 'rendering' or 'off', for tests and debugging. */
+    musicMode: function () {
+      if (!music.playing) { return 'off'; }
+      if (music.source) { return 'loop'; }
+      if (music.timer) { return 'live'; }
+      return 'rendering';
+    },
 
     /* For testing: render into a given (offline) AudioContext. */
     _attach: function (ac) {
@@ -370,6 +491,7 @@
     _playStep: function (step, bar, t) { playStep(step, bar, t); },
     _sfxAt: function (name, t) { SFX[name](t); },
     _setMusicGain: function (v) { musicBus.gain.value = v; },
+    _loopBuffer: function () { return music.buffer; },
     STEP: STEP
   };
 
