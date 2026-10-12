@@ -601,14 +601,43 @@ html, body {
 }
 
 .options.compact .option {
-  height: 172px;
-  font-size: 36px;
-  margin: 10px 16px;
-  padding-top: 18px;
-  padding-bottom: 18px;
+  height: 112px;
+  font-size: 34px;
+  margin: 8px 16px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
-.options.compact .option-text { height: 136px; }
+.options.compact .option-text { height: 84px; }
+
+.screen-reveal .headline { font-size: 80px; }
+.screen-reveal .points { font-size: 40px; margin: 2px 0 6px 0; }
+.screen-reveal .mini-question { font-size: 36px; margin-bottom: 0; }
+.screen-reveal .btn-row { margin-top: 16px; }
+
+.legend {
+  text-align: center;
+  font-size: 32px;
+  color: #c8cdf0;
+  height: 42px;
+}
+
+.fact {
+  margin: 14px 0 0 0;
+  padding: 16px 28px;
+  border-radius: 20px;
+  background: #102a2a;
+  border: 3px solid #2e8f86;
+  font-size: 34px;
+  line-height: 1.3;
+  max-height: 136px;
+  overflow: hidden;
+}
+
+.fact-label {
+  color: #ffd400;
+  font-weight: 800;
+}
 
 /* ---------- Results ---------- */
 

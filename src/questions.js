@@ -5,6 +5,7 @@
  *   { "category": "mixed", "mode": "trivia", "questions": [ ... ] }
  * Trivia question: { id, question, options[4], correctIndex (0-3), difficulty (1-3), tags[] }
  *   optional: "keepOrder": true to stop the options being shuffled (e.g. years in order)
+ * Any question may have a "fact": a fun fact shown after the answer (at most 240 chars).
  * Know-me prompt:  { id, question, options[4], tags[] } with no correctIndex. Write
  *   {name} where the subject's name goes: "{name}'s perfect Sunday is..."
  *
@@ -45,6 +46,9 @@
         if (seen[k]) { errors.push('duplicate option "' + q.options[i] + '"'); }
         seen[k] = true;
       }
+    }
+    if (q.hasOwnProperty('fact') && !(isText(q.fact) && q.fact.length <= 240)) {
+      errors.push('fact must be text of at most 240 characters');
     }
     if (!isArray(q.tags)) {
       errors.push('tags must be a list');

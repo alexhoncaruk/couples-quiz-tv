@@ -19,7 +19,7 @@ var Q = require('../src/questions');
 var ROOT = path.join(__dirname, '..');
 var DATA = path.join(ROOT, 'data');
 var MANIFEST = path.join(DATA, 'manifest.json');
-var KEY_ORDER = ['id', 'question', 'options', 'correctIndex', 'difficulty', 'tags', 'keepOrder'];
+var KEY_ORDER = ['id', 'question', 'options', 'correctIndex', 'difficulty', 'tags', 'fact', 'keepOrder'];
 
 function readJSON(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
@@ -126,6 +126,7 @@ function add(categoryId) {
   ];
   if (cat.mode === 'trivia') { steps.push('Which option is correct? (1-4): ', 'Difficulty (1 easy, 2 medium, 3 hard) [1]: '); }
   steps.push('Tags, comma separated (optional): ');
+  if (cat.mode === 'trivia') { steps.push('Fun fact shown after the answer (optional): '); }
 
   function ask(i) {
     if (i >= steps.length) { return finish(); }
@@ -141,6 +142,8 @@ function add(categoryId) {
       q.difficulty = parseInt(rest.shift() || '1', 10);
     }
     q.tags = (rest.shift() || '').split(',').map(function (t) { return t.trim(); }).filter(Boolean);
+    var fact = rest.shift();
+    if (fact) { q.fact = fact; }
     var problems = Q.validateQuestion(q, cat.mode);
     if (problems.length) {
       console.error('Not saved: ' + problems.join(', '));

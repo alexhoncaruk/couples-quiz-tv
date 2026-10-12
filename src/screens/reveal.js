@@ -17,28 +17,34 @@
       var headline;
       var good;
       var points;
-      var marks = {}; // option index -> { cls, tag }
+      var marks = {}; // option index -> 'correct' | 'wrong'
+      var legend = '';
+      var extra; // the "Did you know?" fact or, for know-me, something to talk about
 
       if (r.type === 'knowme') {
         good = r.match;
         headline = r.match ? 'It\'s a match!' : (r.timedOut ? 'Time\'s up!' : 'Not quite!');
         points = r.match ? names[r.guesser] + ' gets 1 point' : names[r.guesser] + ' gets no point this time';
-        marks[r.secret] = { cls: 'correct', tag: names[r.subject] + '\'s answer' };
-        if (r.choice >= 0) {
-          if (r.choice === r.secret) {
-            marks[r.secret].tag += ' = ' + names[r.guesser] + '\'s guess';
-          } else {
-            marks[r.choice] = { cls: 'wrong', tag: names[r.guesser] + '\'s guess' };
-          }
+        marks[r.secret] = 'correct';
+        if (r.choice === r.secret) {
+          legend = names[r.guesser] + ' guessed ' + names[r.subject] + '\'s answer';
+        } else {
+          legend = 'Green: ' + names[r.subject] + '\'s answer' + (r.choice >= 0 ? '  ·  Red: ' + names[r.guesser] + '\'s guess' : '');
+          if (r.choice >= 0) { marks[r.choice] = 'wrong'; }
         }
+        extra = { label: 'Talk about it: ', text: CQ.UI.fillName(CQ.UI.talkPrompt(game.index + game.total), names[r.subject], names[r.guesser]) };
       } else {
         good = r.correct;
         headline = r.correct ? 'Correct!' : (r.timedOut ? 'Time\'s up!' : 'Not quite!');
         points = r.correct
           ? names[r.actor] + ' +' + r.points.total + ' points  (' + r.points.base + ' + ' + r.points.bonus + ' speed bonus)'
           : names[r.actor] + ' gets 0 points';
-        marks[r.correctIndex] = { cls: 'correct', tag: 'Right answer' };
-        if (r.choice >= 0 && r.choice !== r.correctIndex) { marks[r.choice] = { cls: 'wrong', tag: names[r.actor] + '\'s answer' }; }
+        marks[r.correctIndex] = 'correct';
+        if (r.choice >= 0 && r.choice !== r.correctIndex) {
+          marks[r.choice] = 'wrong';
+          legend = 'Green: right answer  ·  Red: ' + names[r.actor] + '\'s answer';
+        }
+        if (q.fact) { extra = { label: 'Did you know? ', text: q.fact }; }
       }
 
       el.appendChild(h('div', { class: 'topbar' }, [
@@ -47,21 +53,22 @@
       ]));
       el.appendChild(h('div', { class: 'headline ' + (good ? 'good' : 'bad') }, headline));
       el.appendChild(h('div', { class: 'points' }, points));
-      var text = game.mode === 'knowme' ? CQ.UI.fillName(q.question, names[r.subject]) : q.question;
+      var text = game.mode === 'knowme' ? CQ.UI.fillName(q.question, names[r.subject], names[r.guesser]) : q.question;
       el.appendChild(h('div', { class: 'mini-question' }, text));
+      el.appendChild(h('div', { class: 'legend' }, legend || '\u00a0'));
 
       var opts = h('div', { class: 'options compact' });
       el.appendChild(opts);
       q.options.forEach(function (opt, i) {
-        var m = marks[i];
-        opts.appendChild(h('div', { class: 'option focusable ' + (m ? m.cls : 'dim') }, [
+        opts.appendChild(h('div', { class: 'option focusable ' + (marks[i] || 'dim') }, [
           h('span', { class: 'letter' }, CQ.UI.LETTERS[i]),
-          h('span', { class: 'option-text' }, [
-            game.mode === 'knowme' ? CQ.UI.fillName(opt, names[r.subject]) : opt,
-            m ? h('span', { class: 'tag' }, m.tag) : null
-          ])
+          h('span', { class: 'option-text' }, game.mode === 'knowme' ? CQ.UI.fillName(opt, names[r.subject], names[r.guesser]) : opt)
         ]));
       });
+
+      if (extra) {
+        el.appendChild(h('div', { class: 'fact' }, [h('span', { class: 'fact-label' }, extra.label), extra.text]));
+      }
 
       var last = Game.isLastTurn(game);
       var nextIsGuess = !last && game.mode === 'knowme' && Game.turnInfo(game).blockPos < Game.turnInfo(game).blockSize;

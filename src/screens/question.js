@@ -53,7 +53,7 @@
       }
       el.appendChild(h('div', { class: 'prompt' }, prompt));
 
-      var text = game.mode === 'knowme' ? CQ.UI.fillName(q.question, subjectName) : q.question;
+      var text = game.mode === 'knowme' ? CQ.UI.fillName(q.question, subjectName, names[t.guesser]) : q.question;
       el.appendChild(h('div', { class: 'question' }, text));
 
       var body = h('div', { class: 'options' });
@@ -61,7 +61,7 @@
       var items = q.options.map(function (opt, i) {
         var o = h('div', { class: 'option focusable' }, [
           h('span', { class: 'letter' }, CQ.UI.LETTERS[i]),
-          h('span', { class: 'option-text' }, game.mode === 'knowme' ? CQ.UI.fillName(opt, subjectName) : opt)
+          h('span', { class: 'option-text' }, game.mode === 'knowme' ? CQ.UI.fillName(opt, subjectName, names[t.guesser]) : opt)
         ]);
         body.appendChild(o);
         return { el: o, sound: null, onSelect: function () { choose(i); } };

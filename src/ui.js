@@ -102,9 +102,10 @@
     });
   }
 
-  /* Replace {name} in know-me prompts with the person they are about. */
-  function fillName(text, name) {
-    return String(text).replace(/\{name\}/g, name);
+  /* Replace {name} in know-me prompts with the person they are about, and {partner}
+   * with the other player. */
+  function fillName(text, name, partner) {
+    return String(text).replace(/\{name\}/g, name).replace(/\{partner\}/g, partner || 'their partner');
   }
 
   /* The two mute buttons (music, sound effects) used on the title and between turns.
@@ -160,6 +161,30 @@
     return layer;
   }
 
+  /* Know-me answers have no "fun fact", so the reveal shows a conversation starter. */
+  var TALK_PROMPTS = [
+    '{name}, what\'s the story behind that answer?',
+    'Was that an easy pick, {name}, or did you hesitate?',
+    'Would {name} have picked the same answer five years ago?',
+    'Guesser: what made you think so?',
+    '{name}, is there an answer you wish had been on the list?',
+    'Has {name}\'s answer ever changed? When?',
+    'Guesser: rate how sure you were, from 1 to 10.',
+    '{name}, which answer was your second choice?',
+    'Is there a funny memory that goes with this one?',
+    'Do you two agree on this one? Who is more like that?',
+    '{name}, explain your answer in one sentence!',
+    'What would your best friends have guessed for {name}?',
+    'Guesser: which answer did you almost pick?',
+    '{name}, would you change your answer after hearing the guess?',
+    'Has this ever caused a little argument between you two?',
+    'What would your parents say {name}\'s answer is?'
+  ];
+
+  function talkPrompt(i) {
+    return TALK_PROMPTS[Math.abs(i) % TALK_PROMPTS.length];
+  }
+
   var LETTERS = ['A', 'B', 'C', 'D'];
 
   CQ.UI = {
@@ -176,6 +201,7 @@
     confirmQuit: confirmQuit,
     soundToggles: soundToggles,
     confetti: confetti,
+    talkPrompt: talkPrompt,
     fillName: fillName,
     LETTERS: LETTERS
   };
