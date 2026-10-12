@@ -34,7 +34,7 @@ back and forth.
 | Arrows (D-pad) | Move the yellow focus ring |
 | OK / Enter | Select |
 | Back (also Escape or Backspace on a keyboard) | One screen back. During a game it asks "Quit game?" first |
-| Up five times quickly (or `d` on a keyboard) | Show or hide the key debug overlay |
+| `d` on a keyboard (or Settings → Key debug overlay) | Show or hide the key debug overlay |
 
 On the Settings screen, Left/Right change a value.
 
@@ -69,7 +69,7 @@ They cover:
 
 - D-pad navigation: grids, wide keyboard keys, sticky columns, disabled items, wrapping
 - Key mapping: modern `key` names, old `keyCode`s, Android DPAD_CENTER and Back codes,
-  held keys, the Up x5 shortcut, and Back arriving as a browser history event
+  held keys, and Back arriving as a browser history event
 - Scoring, turn order, the comeback question, the know-me flow, stats
 - Screen transitions, question validation, shuffling, avoiding repeated questions
 - Every content file
@@ -152,16 +152,15 @@ that happens, turn *Sound effects* off too.
 
 You need this when a button does nothing or does the wrong thing.
 
-1. Press **Up five times quickly** on any screen (or `d` on a keyboard). A black box opens
-   in the top right corner.
+1. Go to **Settings → Key debug overlay** and switch it **On** (or press `d` on a
+   keyboard). A black box opens in the top right corner.
 2. Press each button. Every press adds a line like
    ```
    key="ArrowDown" code="ArrowDown" keyCode=40   -> down
    ```
    `-> ignored` means the game doesn't understand that key yet. The box also shows the
    screen size the browser reports and its user agent.
-3. Press Up five times again to close it. You can also turn it on permanently in
-   Settings.
+3. Switch it off again in Settings when you're done.
 
 For a guided check, go to **Settings → Remote check**: it shows a box for Up, Down, Left,
 Right, OK and Back that turns green when the button works. Press Back twice to leave.
@@ -247,7 +246,7 @@ index.html              the page; loads the scripts below in order (?v=N busts T
 styles/main.css         10-foot UI on a 1920x1080 stage scaled to the screen
 src/
   nav.js                grid navigation logic (pure, tested)
-  input.js              the only keyboard listener: key mapping, Back history trap, Up x5
+  input.js              the only keyboard listener: key mapping, Back history trap
   router.js             screen state machine (allowed transitions) + focus ring + confirm dialog
   game.js               turns, scoring, know-me flow, stats (pure, tested)
   questions.js          manifest/question loading, validation, shuffling, unseen-first picking

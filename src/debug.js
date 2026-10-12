@@ -1,5 +1,5 @@
 /* Couples Quiz TV - key debug overlay.
- * Toggle with "d" or Up x5. Shows exactly what the remote sends (key, code, keyCode)
+ * Turn on in Settings (or press "d" on a keyboard). Shows exactly what the remote sends (key, code, keyCode)
  * and what the game made of it, plus the screen size the TV browser reports. */
 (function (root) {
   'use strict';
@@ -49,7 +49,7 @@
         : 'keyCode ' + this.last.keyCode + '  key "' + this.last.key + '"';
     }
     CQ.UI.clear(this.el);
-    this.el.appendChild(h('div', null, 'KEY DEBUG  (d or Up x5 to close)'));
+    this.el.appendChild(h('div', null, 'KEY DEBUG  (turn off in Settings)'));
     this.el.appendChild(h('div', { class: 'debug-big' }, big));
     this.el.appendChild(h('div', null, this.lines.join('\n') || '-'));
     var errors = root.CQ_ERRORS || [];

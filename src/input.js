@@ -38,8 +38,6 @@
     68: 'debug' // "d"
   };
 
-  var UP_COMBO_COUNT = 5;
-  var UP_COMBO_MS = 2500;
   var BACK_DEDUPE_MS = 600;
 
   /* Map a keyboard event (or anything with key / keyCode / which) to an action or null. */
@@ -54,7 +52,6 @@
   function Controller() {
     this.handler = null;
     this.rawListeners = [];
-    this.upTimes = [];
     this.lastBackAt = -Infinity;
     this.win = null;
     this.trapEnabled = false;
@@ -114,20 +111,6 @@
       time: now
     };
 
-    // Up pressed 5 times in a row (within 2.5 s) toggles the debug overlay, for
-    // remotes that have no "d" key.
-    var combo = false;
-    if (action === 'up' && !e.repeat) {
-      this.upTimes.push(now);
-      while (this.upTimes.length && now - this.upTimes[0] > UP_COMBO_MS) { this.upTimes.shift(); }
-      if (this.upTimes.length >= UP_COMBO_COUNT) {
-        this.upTimes = [];
-        combo = true;
-      }
-    } else if (action && action !== 'up') {
-      this.upTimes = [];
-    }
-
     this.emitRaw(info);
     if (!action) { return; }
     if (e.preventDefault) { e.preventDefault(); }
@@ -136,7 +119,6 @@
     if (e.repeat && (action === 'enter' || action === 'back' || action === 'debug')) { return; }
 
     this.dispatch(action, info);
-    if (combo) { this.dispatch('debug', info); }
   };
 
   Controller.prototype.onPopState = function (e, now) {

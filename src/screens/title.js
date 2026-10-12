@@ -15,7 +15,7 @@
   }
 
   CQ.Screens.title = {
-    hints: [['↑ ↓', 'Move'], ['OK', 'Select'], ['↑ x5', 'Key debug']],
+    hints: [['↑ ↓', 'Move'], ['OK', 'Select']],
 
     pairKey: function (players) {
       return players.slice().sort().join(' & ').toLowerCase();

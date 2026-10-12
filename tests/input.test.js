@@ -92,25 +92,11 @@
     eq(x.got, ['right', 'right', 'enter']);
   });
 
-  test('input: Up x5 within 2.5 s toggles debug', function () {
+  test('input: pressing Up many times quickly does not open the debug overlay', function () {
     var x = controller();
-    for (var i = 0; i < 5; i++) { x.c.onKeyDown(key('ArrowUp', 38), 1000 + i * 300); }
-    eq(x.got, ['up', 'up', 'up', 'up', 'up', 'debug']);
-  });
-
-  test('input: Up x5 too slowly or interrupted does not toggle debug', function () {
-    var x = controller();
-    var t = 0;
-    for (var i = 0; i < 5; i++) { x.c.onKeyDown(key('ArrowUp', 38), t); t += 900; }
-    eq(x.got.indexOf('debug'), -1, 'too slow');
-    var y = controller();
-    y.c.onKeyDown(key('ArrowUp', 38), 0);
-    y.c.onKeyDown(key('ArrowUp', 38), 100);
-    y.c.onKeyDown(key('ArrowDown', 40), 200);
-    y.c.onKeyDown(key('ArrowUp', 38), 300);
-    y.c.onKeyDown(key('ArrowUp', 38), 400);
-    y.c.onKeyDown(key('ArrowUp', 38), 500);
-    eq(y.got.indexOf('debug'), -1, 'interrupted by Down');
+    for (var i = 0; i < 8; i++) { x.c.onKeyDown(key('ArrowUp', 38), 1000 + i * 100); }
+    eq(x.got.indexOf('debug'), -1);
+    eq(x.got.length, 8);
   });
 
   test('input: raw listeners see every key, even ignored ones, and can unsubscribe', function () {
