@@ -49,6 +49,12 @@
     });
   });
 
+  T.test('data: every trivia question (except custom) has a fun fact for the reveal screen', function () {
+    fileCats.filter(function (c) { return c.mode === 'trivia' && c.id !== 'custom'; }).forEach(function (cat) {
+      load(cat).questions.forEach(function (q) { T.ok(typeof q.fact === 'string' && q.fact.length > 0, q.id + ' has no fact'); });
+    });
+  });
+
   T.test('data: every know-me prompt mentions {name}', function () {
     fileCats.filter(function (c) { return c.mode === 'knowme'; }).forEach(function (cat) {
       load(cat).questions.forEach(function (q) { T.ok(q.question.indexOf('{name}') >= 0, q.id); });

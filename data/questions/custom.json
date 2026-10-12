@@ -2,15 +2,15 @@
   "category": "custom",
   "mode": "trivia",
   "questions": [
-    {"id":"custom-001","question":"Which region of Spain is paella originally from?","options":["Andalusia","Valencia","Catalonia","Galicia"],"correctIndex":1,"difficulty":2,"tags":["food","spain"]},
-    {"id":"custom-002","question":"What is the main ingredient in hummus?","options":["Lentils","Chickpeas","Beans","Peas"],"correctIndex":1,"difficulty":1,"tags":["food"]},
-    {"id":"custom-003","question":"Which nut is marzipan made from?","options":["Hazelnut","Walnut","Almond","Pistachio"],"correctIndex":2,"difficulty":1,"tags":["food"]},
-    {"id":"custom-004","question":"Sushi rice is seasoned with which ingredient?","options":["Lemon juice","Vinegar","Soy sauce","Honey"],"correctIndex":1,"difficulty":2,"tags":["food"]},
-    {"id":"custom-005","question":"Which spice gives traditional paella its golden colour?","options":["Turmeric","Paprika","Saffron","Cumin"],"correctIndex":2,"difficulty":1,"tags":["food","spain"]},
-    {"id":"custom-006","question":"Which pastry are profiteroles made from?","options":["Puff","Shortcrust","Choux","Filo"],"correctIndex":2,"difficulty":2,"tags":["food"]},
-    {"id":"custom-007","question":"Which country does feta cheese come from?","options":["Italy","Greece","Turkey","France"],"correctIndex":1,"difficulty":1,"tags":["food"]},
-    {"id":"custom-008","question":"Which flavour is the classic tiramisu soaked in?","options":["Coffee","Mint","Lemon","Orange"],"correctIndex":0,"difficulty":1,"tags":["food"]},
-    {"id":"custom-009","question":"Which fruit is cider made from?","options":["Pears","Grapes","Apples","Plums"],"correctIndex":2,"difficulty":1,"tags":["drinks"]},
-    {"id":"custom-010","question":"In Spain, churros are traditionally dipped in…","options":["Hot chocolate","Honey","Custard","Coffee"],"correctIndex":0,"difficulty":1,"tags":["food","spain"]}
+    {"id":"custom-001","question":"Which region of Spain is paella originally from?","options":["Andalusia","Valencia","Catalonia","Galicia"],"correctIndex":1,"difficulty":2,"tags":["food","spain"],"fact":"Paella is named after the wide, shallow pan it's cooked in: \"paella\" simply means \"pan\" in Valencian."},
+    {"id":"custom-002","question":"What is the main ingredient in hummus?","options":["Lentils","Chickpeas","Beans","Peas"],"correctIndex":1,"difficulty":1,"tags":["food"],"fact":"\"Hummus\" is simply the Arabic word for chickpea."},
+    {"id":"custom-003","question":"Which nut is marzipan made from?","options":["Hazelnut","Walnut","Almond","Pistachio"],"correctIndex":2,"difficulty":1,"tags":["food"],"fact":"Toledo in Spain and Lübeck in Germany are both famous for their marzipan."},
+    {"id":"custom-004","question":"Sushi rice is seasoned with which ingredient?","options":["Lemon juice","Vinegar","Soy sauce","Honey"],"correctIndex":1,"difficulty":2,"tags":["food"],"fact":"Sushi rice is seasoned with rice vinegar, sugar and salt. Sushi began as a way of preserving fish in fermented rice."},
+    {"id":"custom-005","question":"Which spice gives traditional paella its golden colour?","options":["Turmeric","Paprika","Saffron","Cumin"],"correctIndex":2,"difficulty":1,"tags":["food","spain"],"fact":"Saffron is the dried stigmas of a crocus flower. It takes around 150 flowers to make a single gram."},
+    {"id":"custom-006","question":"Which pastry are profiteroles made from?","options":["Puff","Shortcrust","Choux","Filo"],"correctIndex":2,"difficulty":2,"tags":["food"],"fact":"Choux pastry puffs up hollow because the water in the dough turns to steam in the hot oven."},
+    {"id":"custom-007","question":"Which country does feta cheese come from?","options":["Italy","Greece","Turkey","France"],"correctIndex":1,"difficulty":1,"tags":["food"],"fact":"Feta is protected in the EU: only cheese made in Greece in the traditional way can be sold as feta."},
+    {"id":"custom-008","question":"Which flavour is the classic tiramisu soaked in?","options":["Coffee","Mint","Lemon","Orange"],"correctIndex":0,"difficulty":1,"tags":["food"],"fact":"Tiramisu means \"pick me up\" in Italian, probably thanks to the coffee and cocoa."},
+    {"id":"custom-009","question":"Which fruit is cider made from?","options":["Pears","Grapes","Apples","Plums"],"correctIndex":2,"difficulty":1,"tags":["drinks"],"fact":"In Asturias, cider is poured from high above the glass to make it lively and fizzy."},
+    {"id":"custom-010","question":"In Spain, churros are traditionally dipped in…","options":["Hot chocolate","Honey","Custard","Coffee"],"correctIndex":0,"difficulty":1,"tags":["food","spain"],"fact":"In Madrid, a thicker cousin of the churro is called a \"porra\"."}
   ]
 }
