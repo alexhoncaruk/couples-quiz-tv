@@ -170,6 +170,24 @@
       });
       noise(t + 0.5, 0.6, 0.12, sfxBus, 'highpass', 6000);
     },
+    cheer: function (t) { // applause: lots of short random claps that swell and fade
+      for (var i = 0; i < 90; i++) {
+        var at = Math.pow(Math.random(), 1.4) * 2.6;
+        var loud = 0.12 + 0.22 * Math.random() * (1 - at / 3);
+        noise(t + at, 0.02 + Math.random() * 0.03, loud, sfxBus, 'bandpass', 1200 + Math.random() * 2200, 1.2);
+      }
+    },
+    horn: function (t) { // party horn
+      var f = lowpass(1800, sfxBus);
+      tone('sawtooth', 380, t, 0.12, 0.12, f, 520);
+      tone('sawtooth', 520, t + 0.13, 0.45, 0.14, f, 760);
+    },
+    celebrate: function (t) { // winner: fanfare, party horns and applause
+      SFX.win(t);
+      SFX.horn(t + 0.55);
+      SFX.cheer(t + 0.7);
+      SFX.horn(t + 1.5);
+    },
     tie: function (t) {
       [[392, 493.88], [440, 554.37]].forEach(function (pair, i) {
         pair.forEach(function (f) { tone('triangle', f, t + i * 0.3, 0.5, 0.14, sfxBus); });

@@ -26,7 +26,7 @@
 
   test('sound: the effects the screens use all exist', function () {
     ['move', 'select', 'back', 'type', 'delete', 'toggle', 'open', 'error', 'start', 'pass',
-      'lock', 'tick', 'correct', 'wrong', 'win', 'tie'].forEach(function (n) {
+      'lock', 'tick', 'correct', 'wrong', 'win', 'tie', 'cheer', 'horn', 'celebrate'].forEach(function (n) {
       ok(Sound.SFX_NAMES.indexOf(n) >= 0, n);
     });
   });

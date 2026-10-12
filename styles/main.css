@@ -833,3 +833,67 @@ html, body {
 .player-name.long { font-size: 62px; }
 .pass-name.long { font-size: 120px; }
 .final-name.long { font-size: 48px; }
+
+/* ---------- Confetti ---------- */
+
+.confetti-layer {
+  position: absolute;
+  left: -96px;
+  top: -54px;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.confetti {
+  position: absolute;
+  top: -40px;
+  border-radius: 3px;
+  opacity: 0;
+  -webkit-animation-name: confetti-a;
+  animation-name: confetti-a;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+}
+
+.confetti.c1 { -webkit-animation-name: confetti-b; animation-name: confetti-b; }
+.confetti.c2 { -webkit-animation-name: confetti-c; animation-name: confetti-c; border-radius: 50%; }
+
+@-webkit-keyframes confetti-a {
+  0% { opacity: 1; -webkit-transform: translate3d(0, 0, 0) rotate(0deg); }
+  90% { opacity: 1; }
+  100% { opacity: 0; -webkit-transform: translate3d(90px, 1150px, 0) rotate(720deg); }
+}
+@keyframes confetti-a {
+  0% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(90px, 1150px, 0) rotate(720deg); }
+}
+@-webkit-keyframes confetti-b {
+  0% { opacity: 1; -webkit-transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { -webkit-transform: translate3d(-80px, 560px, 0) rotate(-300deg); }
+  90% { opacity: 1; }
+  100% { opacity: 0; -webkit-transform: translate3d(20px, 1150px, 0) rotate(-620deg); }
+}
+@keyframes confetti-b {
+  0% { opacity: 1; transform: translate3d(0, 0, 0) rotate(0deg); }
+  50% { transform: translate3d(-80px, 560px, 0) rotate(-300deg); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(20px, 1150px, 0) rotate(-620deg); }
+}
+@-webkit-keyframes confetti-c {
+  0% { opacity: 1; -webkit-transform: translate3d(0, 0, 0) scale(1); }
+  50% { -webkit-transform: translate3d(60px, 560px, 0) scale(0.7); }
+  90% { opacity: 1; }
+  100% { opacity: 0; -webkit-transform: translate3d(-40px, 1150px, 0) scale(1); }
+}
+@keyframes confetti-c {
+  0% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(60px, 560px, 0) scale(0.7); }
+  90% { opacity: 1; }
+  100% { opacity: 0; transform: translate3d(-40px, 1150px, 0) scale(1); }
+}

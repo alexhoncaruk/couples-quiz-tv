@@ -138,6 +138,28 @@
     return { el: box, items: [music, sfx] };
   }
 
+  var CONFETTI_COLOURS = ['#ffd400', '#ff8a9a', '#5ee0d3', '#6a5cf0', '#5df08f', '#ff7b6b', '#ffffff'];
+
+  /* Confetti falling over the whole stage for a few seconds. Pure CSS animations (cheap on
+   * slow TVs); the pieces live inside `el`, so they go away with the screen. */
+  function confetti(el, count) {
+    var layer = h('div', { class: 'confetti-layer' });
+    count = count || 90;
+    for (var i = 0; i < count; i++) {
+      var w = 14 + Math.round(Math.random() * 12);
+      var css = 'left:' + Math.round(Math.random() * 1900 - 96) + 'px;' +
+        'width:' + w + 'px;height:' + Math.round(w * 0.55) + 'px;' +
+        'background:' + CONFETTI_COLOURS[i % CONFETTI_COLOURS.length] + ';';
+      var dur = (2.8 + Math.random() * 2.4).toFixed(2) + 's';
+      var delay = (Math.random() * 2.6).toFixed(2) + 's';
+      css += '-webkit-animation-duration:' + dur + ';animation-duration:' + dur + ';' +
+        '-webkit-animation-delay:' + delay + ';animation-delay:' + delay + ';';
+      layer.appendChild(h('div', { class: 'confetti c' + (i % 3), style: css }));
+    }
+    el.appendChild(layer);
+    return layer;
+  }
+
   var LETTERS = ['A', 'B', 'C', 'D'];
 
   CQ.UI = {
@@ -153,6 +175,7 @@
     seconds: seconds,
     confirmQuit: confirmQuit,
     soundToggles: soundToggles,
+    confetti: confetti,
     fillName: fillName,
     LETTERS: LETTERS
   };

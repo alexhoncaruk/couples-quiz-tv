@@ -36,7 +36,7 @@
       var s = CQ.Game.summary(game);
       var knowme = s.mode === 'knowme';
       saveRecord(game, s);
-      CQ.Sound.play(s.winner >= 0 ? 'win' : 'tie');
+      CQ.Sound.play(s.winner >= 0 ? 'celebrate' : 'tie');
 
       var headline = s.winner < 0
         ? h('span', null, 'It\'s a tie!')
@@ -56,6 +56,9 @@
           stat('Best streak', String(p.bestStreak))
         ]));
       });
+
+      // Confetti for the winner (a lighter shower for a tie).
+      CQ.UI.confetti(el, s.winner >= 0 ? 110 : 40);
 
       var again = CQ.UI.button('Play again', 'primary');
       var change = CQ.UI.button('Change category');
